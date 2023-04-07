@@ -1,5 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from dialog_set_time import Ui_dialogUI
+from fishFeedingScheduleDialog import Ui_dialogUI
+from PyQt5.QtCore import QTime, QTimer
+from datetime import datetime
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -519,6 +521,12 @@ class Ui_MainWindow(object):
         # Open the dialog when "SET TIME" button is clicked.
         self.setTimeBtn.clicked.connect(lambda: self.openFeedingScheduleDialog(MainWindow))
 
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.fishFeedingSchedCounter)
+        self.timer.start(1000) # Timer updates every 1 second
+        
+        self.fishFeedingSchedCounter()
+
     def openFeedingScheduleDialog(self, parent):
         if not hasattr(self, 'dialog'):
             dialogUI = QtWidgets.QDialog(parent)
@@ -534,6 +542,15 @@ class Ui_MainWindow(object):
             dialogUI.show()
             dialogUI.exec_()
 
+    # Display a real-time date and time 
+    def fishFeedingSchedCounter(self):
+        raw_datetime = datetime.now()
+        formatted_date = raw_datetime.strftime("%B %d, %Y (%A)")
+        formatted_time = raw_datetime.strftime("%I:%M:%S %p")
+        
+        self.dateLabel.setText(formatted_date)
+        self.timeLabel.setText(formatted_time)
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Nutrient Sufficiency Monitoring System"))
@@ -543,8 +560,8 @@ class Ui_MainWindow(object):
         self.liveFeedBtn.setText(_translate("MainWindow", "GO LIVE!"))
         self.showFolderBtn.setText(_translate("MainWindow", "SHOW FOLDER"))
         self.currentTimeTitle.setText(_translate("MainWindow", "TIMESTAMP:"))
-        self.dateLabel.setText(_translate("MainWindow", "April 1, 2023"))
-        self.timeLabel.setText(_translate("MainWindow", "9:48 PM"))
+        self.dateLabel.setText(_translate("MainWindow", "-"))
+        self.timeLabel.setText(_translate("MainWindow", "-"))
         self.inferenceResultTitle.setText(_translate("MainWindow", "INFERENCE RESULT:"))
         self.classTitle.setText(_translate("MainWindow", "CLASS:"))
         self.classificationResultLabel.setText(_translate("MainWindow", "DEFICIENT"))
