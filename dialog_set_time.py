@@ -4,48 +4,35 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_dialogUI(object):
     def setupUi(self, dialogUI):
         dialogUI.setObjectName("dialogUI")
-        dialogUI.resize(500, 310)
-        dialogUI.setMinimumSize(QtCore.QSize(500, 310))
-        dialogUI.setMaximumSize(QtCore.QSize(500, 310))
-        dialogUI.setStyleSheet("QFrame{\n"
-"    background-color: rgb(217, 217, 217);\n"
-"}\n"
-"")
+        dialogUI.resize(1024, 600)
+        dialogUI.setStyleSheet("")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(dialogUI)
         self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_4.setSpacing(0)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
-        self.dialogFrame = QtWidgets.QFrame(dialogUI)
+        self.frame = QtWidgets.QFrame(dialogUI)
+        self.frame.setStyleSheet("QFrame {\n"
+"    background-color: rgba(0, 0, 0, 120);\n"
+"}")
+        self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame.setObjectName("frame")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.frame)
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout.setSpacing(15)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
+        self.dialogFrame = QtWidgets.QFrame(self.frame)
+        self.dialogFrame.setMinimumSize(QtCore.QSize(500, 310))
+        self.dialogFrame.setMaximumSize(QtCore.QSize(500, 310))
         self.dialogFrame.setStyleSheet("QFrame{\n"
+"    background-color: rgb(217, 217, 217);\n"
 "    border-radius:30px;\n"
-"}\n"
-"QPushButton{\n"
-"    color:grey;\n"
-"    border-style: solid;\n"
-"    border-width:2px;\n"
-"    border-color: #00557f;\n"
-"    border-radius: 10px;\n"
-"}\n"
-"\n"
-"QPushButton::hover{\n"
-"    color:#00FFFF;\n"
-"    border-style: solid;\n"
-"    border-width:2px;\n"
-"    border-color: #00FFFF;\n"
-"    border-radius: 10px;\n"
 "}\n"
 "\n"
 "QLabel{\n"
 "    background-color:transparent;\n"
-"}\n"
-"\n"
-"#Opps{\n"
-"    \n"
-"    color: rgb(85, 255, 127);\n"
-"}\n"
-"#No_Internet{\n"
-"    \n"
-"    color: rgb(170, 255, 255);\n"
 "}\n"
 "")
         self.dialogFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -127,8 +114,8 @@ class Ui_dialogUI(object):
         self.buttonHLayout = QtWidgets.QHBoxLayout()
         self.buttonHLayout.setSpacing(15)
         self.buttonHLayout.setObjectName("buttonHLayout")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.buttonHLayout.addItem(spacerItem)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.buttonHLayout.addItem(spacerItem1)
         self.setTimeBtn = QtWidgets.QPushButton(self.dialogFrame)
         font = QtGui.QFont()
         font.setFamily("Poppins")
@@ -180,15 +167,17 @@ class Ui_dialogUI(object):
         self.verticalLayout.addLayout(self.buttonHLayout)
         self.verticalLayout_3.addLayout(self.verticalLayout)
         self.verticalLayout_3.setStretch(1, 1)
-        self.verticalLayout_4.addWidget(self.dialogFrame)
+        self.horizontalLayout.addWidget(self.dialogFrame)
+        spacerItem2 = QtWidgets.QSpacerItem(243, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem2)
+        self.verticalLayout_4.addWidget(self.frame)
 
         self.retranslateUi(dialogUI)
         QtCore.QMetaObject.connectSlotsByName(dialogUI)
-
+        
         dialogUI.setWindowFlag(QtCore.Qt.FramelessWindowHint) # make the window frameless
         dialogUI.setAttribute(QtCore.Qt.WA_TranslucentBackground) # make the background translucent
 
-    
     def retranslateUi(self, dialogUI):
         _translate = QtCore.QCoreApplication.translate
         dialogUI.setWindowTitle(_translate("dialogUI", "Dialog"))
@@ -197,8 +186,7 @@ class Ui_dialogUI(object):
         self.secondSchedTitle.setText(_translate("dialogUI", "Second Feeding Schedule:"))
         self.setTimeBtn.setText(_translate("dialogUI", "SET"))
         self.cancelTimeBtn.setText(_translate("dialogUI", "CANCEL"))
-        
-        
+
 
 if __name__ == "__main__":
     import sys

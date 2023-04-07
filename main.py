@@ -1,16 +1,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from dialog_set_time import Ui_dialogUI
 
-class OverlayWidget(QtWidgets.QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setStyleSheet("background-color: rgba(0, 0, 0, 100);")
-
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.resize(1027, 600)
+        MainWindow.resize(1024, 600)
         MainWindow.setStyleSheet("*{\n"
 "    background-color: rgb(25, 61, 77);\n"
 "}")
@@ -519,20 +514,26 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        MainWindow.setWindowFlag(QtCore.Qt.FramelessWindowHint) # make the window frameless
         
         # Open the dialog when "SET TIME" button is clicked.
-        self.setTimeBtn.clicked.connect(self.openFeedingScheduleDialog)
+        self.setTimeBtn.clicked.connect(lambda: self.openFeedingScheduleDialog(MainWindow))
 
-
-    def openFeedingScheduleDialog(self):
+    def openFeedingScheduleDialog(self, parent):
         if not hasattr(self, 'dialog'):
-            dialogUI = QtWidgets.QDialog()
+            dialogUI = QtWidgets.QDialog(parent)
             ui = Ui_dialogUI()
             ui.setupUi(dialogUI)
-            dialogUI.setModal(True)  # set the dialog to be modal
+            dialogUI.setModal(True)
+
+            # Ensure that the dialog pop up at the center
+            x = int(parent.geometry().x() + (parent.geometry().width() - dialogUI.width()) / 2)
+            y = int(parent.geometry().y() + (parent.geometry().height() - dialogUI.height()) / 2)
+            dialogUI.move(x, y)
+
             dialogUI.show()
             dialogUI.exec_()
-    
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Nutrient Sufficiency Monitoring System"))
