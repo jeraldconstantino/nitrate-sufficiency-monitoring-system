@@ -283,9 +283,9 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0,0">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
        <property name="spacing">
-        <number>5</number>
+        <number>15</number>
        </property>
        <property name="leftMargin">
         <number>15</number>
@@ -294,7 +294,7 @@
         <number>15</number>
        </property>
        <property name="rightMargin">
-        <number>25</number>
+        <number>20</number>
        </property>
        <property name="bottomMargin">
         <number>15</number>
@@ -680,19 +680,6 @@ QPushButton:pressed {
         </layout>
        </item>
        <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
         <layout class="QVBoxLayout" name="fishFeederLayout">
          <property name="spacing">
           <number>20</number>
@@ -734,7 +721,7 @@ QPushButton:pressed {
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="currentTimeLabel">
+            <widget class="QLabel" name="dateLabel">
              <property name="font">
               <font>
                <family>Poppins</family>
@@ -742,7 +729,23 @@ QPushButton:pressed {
               </font>
              </property>
              <property name="text">
-              <string>April 1, 2023 | 9:48 AM</string>
+              <string>April 1, 2023</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="timeLabel">
+             <property name="font">
+              <font>
+               <family>Poppins</family>
+               <pointsize>12</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>9:48 PM</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -803,7 +806,7 @@ QPushButton:pressed {
                 </font>
                </property>
                <property name="text">
-                <string>NORMAL</string>
+                <string>DEFICIENT</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
