@@ -1,3 +1,14 @@
+######################################################################################################
+# TODO: 
+#       - Set Time btn should store the edited time to the local database.
+#       - Fish feeding section should color in red pastel when the inference result is deficient.
+#       - Go Live! btn can be removed, and the capture should automatically turned to live detection.
+#       - Live detection.
+#       - Time schedule should display four schedules in case of deficient.
+#       - Capture and Show folder btns.
+#       - Add a Close btn.
+######################################################################################################
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 from fishFeedingScheduleDialog import Ui_dialogUI
 from PyQt5.QtCore import QTime, QTimer
@@ -573,6 +584,13 @@ class Ui_MainWindow(object):
         if (formatted_current_time == first_feeding_sched or formatted_current_time == second_feeding_sched):
             feedNow()
 
+        # Updates the fish feeding status based on the inference result.
+        class_result = self.classificationResultLabel.text()
+        if (class_result.lower() == "deficient"):
+            self.fishFeedingStatusResult.setText("Four times a day")
+        else:
+            self.fishFeedingStatusResult.setText("Twice a day") 
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Nutrient Sufficiency Monitoring System"))
@@ -590,7 +608,7 @@ class Ui_MainWindow(object):
         self.accuracyTitle.setText(_translate("MainWindow", "ACCURACY:"))
         self.accuracyResult.setText(_translate("MainWindow", "90%"))
         self.fishFeedingStatusTitle.setText(_translate("MainWindow", "FISH FEEDING STATUS:"))
-        self.fishFeedingStatusResult.setText(_translate("MainWindow", "Twice a day"))
+        self.fishFeedingStatusResult.setText(_translate("MainWindow", "-"))
         self.timeScheduleTitle.setText(_translate("MainWindow", "TIME SCHEDULE:"))
         self.firstSchedTitle.setText(_translate("MainWindow", "First:"))
         self.firstSchedResult.setText(_translate("MainWindow", "8:00 AM"))

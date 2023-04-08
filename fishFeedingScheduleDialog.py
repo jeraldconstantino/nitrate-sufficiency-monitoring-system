@@ -190,7 +190,8 @@ class Ui_dialogUI(object):
                 }
                 QMessageBox QLabel {
                         qproperty-alignment: AlignCenter;
-        }""")
+                }
+        """)
 
         ok_button = self.msg_box.addButton(QtWidgets.QMessageBox.Ok)
         ok_button.setStyleSheet("""
