@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from fishFeedingScheduleDialog import Ui_dialogUI
 from PyQt5.QtCore import QTime, QTimer
 from datetime import datetime
+from RPiDevices.fishFeeder import feedNow
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -516,10 +517,13 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        MainWindow.setWindowFlag(QtCore.Qt.FramelessWindowHint) # make the window frameless
+        # MainWindow.setWindowFlag(QtCore.Qt.FramelessWindowHint) # make the window frameless
         
         # Open the dialog when "SET TIME" button is clicked.
         self.setTimeBtn.clicked.connect(lambda: self.openFeedingScheduleDialog(MainWindow))
+
+        # Trigger the Fish Feeding Device to operate
+        self.feedNowBtn.clicked.connect(feedNow)
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.fishFeedingSchedCounter)
@@ -570,9 +574,9 @@ class Ui_MainWindow(object):
         self.fishFeedingStatusTitle.setText(_translate("MainWindow", "FISH FEEDING STATUS:"))
         self.fishFeedingStatusResult.setText(_translate("MainWindow", "Twice a day"))
         self.timeScheduleTitle.setText(_translate("MainWindow", "TIME SCHEDULE:"))
-        self.firstSchedTitle.setText(_translate("MainWindow", "1st:"))
+        self.firstSchedTitle.setText(_translate("MainWindow", "Morning:"))
         self.firstSchedResult.setText(_translate("MainWindow", "8:00 AM"))
-        self.secondSchedTitle.setText(_translate("MainWindow", "2nd:"))
+        self.secondSchedTitle.setText(_translate("MainWindow", "Afternoon:"))
         self.secondSchedResult.setText(_translate("MainWindow", "4:00 PM"))
         self.feedNowBtn.setText(_translate("MainWindow", "FEED NOW"))
         self.setTimeBtn.setText(_translate("MainWindow", "SET TIME"))
