@@ -1,8 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_dialogUI(object):
-    def setupUi(self, dialogUI):
+    def setupUi(self, dialogUI, firstSchedTimeMW, secondSchedTimeMW):
         dialogUI.setObjectName("dialogUI")
         dialogUI.resize(1024, 600)
         dialogUI.setStyleSheet("")
@@ -177,6 +176,63 @@ class Ui_dialogUI(object):
         
         dialogUI.setWindowFlag(QtCore.Qt.FramelessWindowHint) # make the window frameless
         dialogUI.setAttribute(QtCore.Qt.WA_TranslucentBackground) # make the background translucent
+        
+        # Customized QMessageBox() 
+        self.msg_box = QtWidgets.QMessageBox()
+        self.msg_box.setIcon(QtWidgets.QMessageBox.Warning)
+        self.msg_box.setText("WARNING:\n\n The first and second schedules must not be at the same time.")
+        
+        font = QtGui.QFont('Poppins', 12)
+        self.msg_box.setFont(font)
+        self.msg_box.setStyleSheet("""
+                QMessageBox {
+                        background-color: rgb(250, 160, 160);
+                }
+                QMessageBox QLabel {
+                        qproperty-alignment: AlignCenter;
+        }""")
+
+        ok_button = self.msg_box.addButton(QtWidgets.QMessageBox.Ok)
+        ok_button.setStyleSheet("""
+                QPushButton {
+                        background-color: #F44336;
+                        color: #fff;
+                        border-radius: 15px;
+                        padding: 10px 25px;
+                        font: bold 10pt "Poppins";
+                }
+        """)
+        self.msg_box.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+
+        # Close the dialog
+        self.cancelTimeBtn.clicked.connect(dialogUI.reject)
+
+        # Set the time schedule
+        self.setTimeBtn.clicked.connect(lambda: self.setTime(dialogUI, firstSchedTimeMW, secondSchedTimeMW))
+
+
+    def setTime(self, dialogUI, firstSchedTimeMW, secondSchedTimeMW):
+        # Get the time from the QTimeEdit widget as a QTime object and converted to String.
+        editted_first_sched = self.firstSchedTime.time()
+        editted_first_sched_str = editted_first_sched.toString('h:mm AP')
+
+        editted_second_sched = self.secondSchedTime.time()
+        editted_second_sched_str = editted_second_sched.toString('h:mm AP')
+        
+        isValidTime = self.validateTime(editted_first_sched_str, editted_second_sched_str)
+
+        if isValidTime == True:
+            # Set the editted time to the Time Schedule display.
+            firstSchedTimeMW.setText(editted_first_sched_str)
+            secondSchedTimeMW.setText(editted_second_sched_str)
+            dialogUI.reject()
+        else:
+            self.msg_box.exec_()
+            
+    def validateTime(self, firstSchedTime, secondSchedTime):
+        if firstSchedTime == secondSchedTime:
+            return False
+        return True
 
     def retranslateUi(self, dialogUI):
         _translate = QtCore.QCoreApplication.translate

@@ -535,7 +535,7 @@ class Ui_MainWindow(object):
         if not hasattr(self, 'dialog'):
             dialogUI = QtWidgets.QDialog(parent)
             ui = Ui_dialogUI()
-            ui.setupUi(dialogUI)
+            ui.setupUi(dialogUI, self.firstSchedResult, self.secondSchedResult)
             dialogUI.setModal(True)
 
             # Ensure that the dialog pop up at the center
@@ -543,17 +543,35 @@ class Ui_MainWindow(object):
             y = int(parent.geometry().y() + (parent.geometry().height() - dialogUI.height()) / 2)
             dialogUI.move(x, y)
 
+            # Set the first QTime edit based on the current first schedule
+            first_feeding_sched_edit = QTime.fromString(self.firstSchedResult.text(), 'h:mm AP')
+            ui.firstSchedTime.setTime(first_feeding_sched_edit)
+
+            # Set the second QTime edit based on the current second schedule        
+            second_feeding_sched_edit = QTime.fromString(self.secondSchedResult.text(), 'h:mm AP')
+            ui.secondSchedTime.setTime(second_feeding_sched_edit)
+
             dialogUI.show()
             dialogUI.exec_()
 
     # Display a real-time date and time 
     def fishFeedingSchedCounter(self):
-        raw_datetime = datetime.now()
-        formatted_date = raw_datetime.strftime("%B %d, %Y (%A)")
-        formatted_time = raw_datetime.strftime("%I:%M:%S %p")
+        raw_current_datetime = datetime.now()
+        formatted_current_date = raw_current_datetime.strftime("%B %d, %Y (%A)")
+        formatted_current_time = raw_current_datetime.strftime("%I:%M:%S %p")
         
-        self.dateLabel.setText(formatted_date)
-        self.timeLabel.setText(formatted_time)
+        self.dateLabel.setText(formatted_current_date)
+        self.timeLabel.setText(formatted_current_time)
+
+        # Acquired feeding time for morning and afternoon schedule
+        raw_first_feeding_sched = datetime.strptime(self.firstSchedResult.text(), "%I:%M %p")
+        raw_second_feeding_sched = datetime.strptime(self.secondSchedResult.text(), "%I:%M %p")
+
+        first_feeding_sched = raw_first_feeding_sched.strftime("%I:%M:%S %p")
+        second_feeding_sched = raw_second_feeding_sched.strftime("%I:%M:%S %p")
+        
+        if (formatted_current_time == first_feeding_sched or formatted_current_time == second_feeding_sched):
+            feedNow()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -574,9 +592,9 @@ class Ui_MainWindow(object):
         self.fishFeedingStatusTitle.setText(_translate("MainWindow", "FISH FEEDING STATUS:"))
         self.fishFeedingStatusResult.setText(_translate("MainWindow", "Twice a day"))
         self.timeScheduleTitle.setText(_translate("MainWindow", "TIME SCHEDULE:"))
-        self.firstSchedTitle.setText(_translate("MainWindow", "Morning:"))
+        self.firstSchedTitle.setText(_translate("MainWindow", "First:"))
         self.firstSchedResult.setText(_translate("MainWindow", "8:00 AM"))
-        self.secondSchedTitle.setText(_translate("MainWindow", "Afternoon:"))
+        self.secondSchedTitle.setText(_translate("MainWindow", "Second:"))
         self.secondSchedResult.setText(_translate("MainWindow", "4:00 PM"))
         self.feedNowBtn.setText(_translate("MainWindow", "FEED NOW"))
         self.setTimeBtn.setText(_translate("MainWindow", "SET TIME"))
