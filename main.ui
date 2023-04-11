@@ -598,13 +598,14 @@
                <bold>true</bold>
               </font>
              </property>
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
              <property name="styleSheet">
               <string notr="true">QPushButton {
     background-color: #287194;
     color: white;
     padding: 5px 25px;
-	border: 3px solid rgb(25, 61, 77);
-	border-radius: 20px;
 }
 
 QPushButton:hover {
