@@ -10,8 +10,20 @@
     <x>0</x>
     <y>0</y>
     <width>1024</width>
-    <height>620</height>
+    <height>600</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1024</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1024</width>
+    <height>729</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Nutrient Sufficiency Monitoring System</string>
@@ -40,6 +52,9 @@
     </property>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_6">
+      <property name="topMargin">
+       <number>5</number>
+      </property>
       <item>
        <widget class="QLabel" name="appTitle">
         <property name="sizePolicy">
@@ -584,7 +599,6 @@
               <string notr="true">QPushButton {
     background-color: #287194;
     color: white;
-    border-radius: 15px;
     padding: 5px 25px;
 }
 
@@ -615,7 +629,6 @@ QPushButton:pressed {
               <string notr="true">QPushButton {
     background-color: #287194;
     color: white;
-    border-radius: 15px;
     padding: 5px 25px;
 }
 
@@ -646,7 +659,6 @@ QPushButton:pressed {
               <string notr="true">QPushButton {
     background-color: #287194;
     color: white;
-	border-radius: 15px;
     padding: 5px 25px;
 }
 
@@ -961,7 +973,7 @@ QPushButton:pressed {
                 <string>8:00 AM</string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                <set>Qt::AlignCenter</set>
                </property>
               </widget>
              </item>
@@ -1002,7 +1014,7 @@ QPushButton:pressed {
                 <string>4:00 PM</string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                <set>Qt::AlignCenter</set>
                </property>
               </widget>
              </item>
@@ -1048,6 +1060,9 @@ QPushButton:pressed {
                <property name="text">
                 <string>12:00 PM</string>
                </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
               </widget>
              </item>
             </layout>
@@ -1072,7 +1087,7 @@ QPushButton:pressed {
                 </font>
                </property>
                <property name="text">
-                <string>4th</string>
+                <string>4th:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -1091,6 +1106,9 @@ QPushButton:pressed {
                </property>
                <property name="text">
                 <string>8:00 PM</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
                </property>
               </widget>
              </item>
@@ -1138,7 +1156,6 @@ QPushButton:pressed {
                 <string notr="true">QPushButton {
     background-color: #287194;
     color: white;
-	border-radius: 15px;
     padding: 5px 25px;
 }
 
@@ -1169,7 +1186,6 @@ QPushButton:pressed {
                 <string notr="true">QPushButton {
     background-color: #287194;
     color: white;
-    border-radius: 15px;
     padding: 5px 25px;
 }
 
