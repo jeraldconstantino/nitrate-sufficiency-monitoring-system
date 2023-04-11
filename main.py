@@ -140,8 +140,6 @@ class UI(QMainWindow):
 
 		# self.setTimeBtn.clicked.connect(lambda: self.setTime(self, firstSchedTimeMW, secondSchedTimeMW))
 		setTimeBtn = self.dialog.findChild(QPushButton, "setTimeDialogBtn")
-		setTimeBtn.clicked.connect(self.setTime)
-
 		setTimeBtn.setStyleSheet("""
 			QPushButton {
 				background-color: #287194;
@@ -160,6 +158,7 @@ class UI(QMainWindow):
 			}
 		""")
 
+		setTimeBtn.clicked.connect(self.setTime)
 
 		# Close the SET TIME dialog
 		cancelTimeBtn = self.dialog.findChild(QPushButton, "cancelTimeBtn")

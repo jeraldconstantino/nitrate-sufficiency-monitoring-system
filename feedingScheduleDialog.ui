@@ -264,6 +264,9 @@ QTimeEdit::down-button {
           <property name="spacing">
            <number>15</number>
           </property>
+          <property name="topMargin">
+           <number>10</number>
+          </property>
           <item>
            <spacer name="horizontalSpacer">
             <property name="orientation">
