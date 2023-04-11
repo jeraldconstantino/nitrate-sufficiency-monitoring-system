@@ -528,7 +528,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        # MainWindow.setWindowFlag(QtCore.Qt.FramelessWindowHint) # make the window frameless
+        MainWindow.setWindowFlag(QtCore.Qt.FramelessWindowHint) # make the window frameless
         
         # Open the dialog when "SET TIME" button is clicked.
         self.setTimeBtn.clicked.connect(lambda: self.openFeedingScheduleDialog(MainWindow))
@@ -549,7 +549,7 @@ class Ui_MainWindow(object):
             ui.setupUi(dialogUI, self.firstSchedResult, self.secondSchedResult)
             dialogUI.setModal(True)
 
-            # Ensure that the dialog pop up at the center
+            # Ensure that the dialog show up at the center
             x = int(parent.geometry().x() + (parent.geometry().width() - dialogUI.width()) / 2)
             y = int(parent.geometry().y() + (parent.geometry().height() - dialogUI.height()) / 2)
             dialogUI.move(x, y)
