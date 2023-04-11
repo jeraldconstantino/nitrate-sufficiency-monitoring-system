@@ -109,7 +109,7 @@ QLabel{
       <item>
        <layout class="QVBoxLayout" name="verticalLayout">
         <property name="spacing">
-         <number>15</number>
+         <number>5</number>
         </property>
         <item>
          <layout class="QVBoxLayout" name="firstSchedVLayout">
@@ -143,7 +143,7 @@ QLabel{
             <property name="font">
              <font>
               <family>Poppins</family>
-              <pointsize>20</pointsize>
+              <pointsize>12</pointsize>
               <weight>75</weight>
               <bold>true</bold>
              </font>
@@ -154,6 +154,21 @@ QLabel{
     color: #000;
     border: 3px solid rgb(25, 61, 77);
     border-radius: 10px;
+	padding:10px;
+}
+
+QTimeEdit::up-button {
+	subcontrol-origin: border;
+    subcontrol-position: top right;
+    width:40px;
+    height: 25px;
+}
+
+QTimeEdit::down-button {
+	subcontrol-origin: border;
+    subcontrol-position: bottom right;
+    width:40px;
+    height: 25px;
 }</string>
             </property>
             <property name="alignment">
@@ -202,7 +217,7 @@ QLabel{
             <property name="font">
              <font>
               <family>Poppins</family>
-              <pointsize>20</pointsize>
+              <pointsize>12</pointsize>
               <weight>75</weight>
               <bold>true</bold>
              </font>
@@ -213,6 +228,21 @@ QLabel{
     color: #000;
     border: 3px solid rgb(25, 61, 77);
     border-radius: 10px;
+	padding: 10px;
+}
+
+QTimeEdit::up-button {
+	subcontrol-origin: border;
+    subcontrol-position: top right;
+    width:40px;
+    height: 25px;
+}
+
+QTimeEdit::down-button {
+	subcontrol-origin: border;
+    subcontrol-position: bottom right;
+    width:40px;
+    height: 25px;
 }</string>
             </property>
             <property name="alignment">
@@ -248,7 +278,7 @@ QLabel{
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="setTimeBtn">
+           <widget class="QPushButton" name="setTimeDialogBtn">
             <property name="font">
              <font>
               <family>Poppins</family>

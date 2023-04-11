@@ -139,7 +139,7 @@ class UI(QMainWindow):
 		self.secondSchedTime.setTime(second_feeding_sched_edit)
 
 		# self.setTimeBtn.clicked.connect(lambda: self.setTime(self, firstSchedTimeMW, secondSchedTimeMW))
-		setTimeBtn = self.dialog.findChild(QPushButton, "setTimeBtn")
+		setTimeBtn = self.dialog.findChild(QPushButton, "setTimeDialogBtn")
 		setTimeBtn.clicked.connect(self.setTime)
 
 		setTimeBtn.setStyleSheet("""
