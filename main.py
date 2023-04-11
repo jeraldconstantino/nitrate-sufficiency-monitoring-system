@@ -1,7 +1,7 @@
 ######################################################################################################
 # TODO: 
 #       - Set Time btn should store the edited time to the local database.
-#       - Fish feeding section should color in red pastel when the inference result is deficient.
+#       - Fish feeding btns should color in red pastel when the inference result is deficient.
 #       - Go Live! btn can be removed, and the capture should automatically turned to live detection.
 #       - Live detection.
 #       - Time schedule should display four schedules in case of deficient.
@@ -9,7 +9,7 @@
 #       - Add a Close btn.
 ######################################################################################################
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QDialog, QMessageBox, QTimeEdit, QDesktopWidget
+from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QDialog, QMessageBox, QTimeEdit, QFrame
 from PyQt5.QtGui import QFont
 from RPiDevices.fishFeeder import feedNow
 from PyQt5.QtCore import QTime, QTimer
@@ -110,12 +110,28 @@ class UI(QMainWindow):
 		if (formatted_current_time == first_feeding_sched or formatted_current_time == second_feeding_sched):
 			feedNow()
 
+		mainFrame = self.findChild(QFrame, "mainFrame")
+
 		# Updates the fish feeding status based on the inference result.
 		class_result = self.classificationResultLabel.text()
 		if (class_result.lower() == "deficient"):
 			self.fishFeedingStatusResult.setText("Four times a day")
+			mainFrame.setStyleSheet("""
+				QFrame {
+					background-color: rgb(250, 160, 160);
+					border-top-left-radius: 30px;
+    				border-top-right-radius: 30px;
+				}
+			""")
 		else:
 			self.fishFeedingStatusResult.setText("Twice a day") 
+			mainFrame.setStyleSheet("""
+				QFrame {
+					background-color: rgb(211, 212, 206);
+					border-top-left-radius: 30px;
+    				border-top-right-radius: 30px;
+				}
+			""")
 
 	def openFeedingScheduleDialog(self):
 		self.dialog = QDialog(self)
