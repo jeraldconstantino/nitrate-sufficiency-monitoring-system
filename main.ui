@@ -52,6 +52,9 @@
     </property>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_6">
+      <property name="spacing">
+       <number>0</number>
+      </property>
       <property name="topMargin">
        <number>5</number>
       </property>
@@ -292,8 +295,8 @@
       <property name="styleSheet">
        <string notr="true">QFrame {
 	background-color: rgb(211, 212, 206);
-	border-top-left-radius: 50px;
-    border-top-right-radius: 50px;
+	border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
 }</string>
       </property>
       <property name="frameShape">
@@ -544,7 +547,7 @@
 	background-color: rgba(255, 255, 255, 0);
 	color: rgba(0, 0, 0, 255);
 	border: 3px solid rgb(25, 61, 77);
-	border-radius: 40px;
+	border-radius: 20px;
 }</string>
            </property>
            <property name="frameShape">
@@ -600,6 +603,8 @@
     background-color: #287194;
     color: white;
     padding: 5px 25px;
+	border: 3px solid rgb(25, 61, 77);
+	border-radius: 20px;
 }
 
 QPushButton:hover {
