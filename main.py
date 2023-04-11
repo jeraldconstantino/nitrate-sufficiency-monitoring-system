@@ -9,7 +9,7 @@
 #       - Add a Close btn.
 ######################################################################################################
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QDialog, QMessageBox, QTimeEdit
+from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QDialog, QMessageBox, QTimeEdit, QDesktopWidget
 from PyQt5.QtGui import QFont
 from RPiDevices.fishFeeder import feedNow
 from PyQt5.QtCore import QTime, QTimer
@@ -42,6 +42,42 @@ class UI(QMainWindow):
 		# QPushButtons widget
 		self.feedNowBtn = self.findChild(QPushButton, "feedNowBtn")
 		self.setTimeBtn = self.findChild(QPushButton, "setTimeBtn")
+
+		self.feedNowBtn.setStyleSheet("""
+			QPushButton {
+				background-color: #287194;
+				color: #fff;
+				border-radius: 15px;
+				padding: 10px 25px;
+				font: bold 12pt "Poppins";
+			}
+
+			QPushButton:hover {
+				background-color: #1F5773;
+			}
+
+			QPushButton:pressed {
+				background-color: #193D4D;
+			}
+		""")
+
+		self.setTimeBtn.setStyleSheet("""
+			QPushButton {
+				background-color: #287194;
+				color: #fff;
+				border-radius: 15px;
+				padding: 10px 25px;
+				font: bold 12pt "Poppins";
+			}
+
+			QPushButton:hover {
+				background-color: #1F5773;
+			}
+
+			QPushButton:pressed {
+				background-color: #193D4D;
+			}
+		""")
 
 		#Change the time stamp display per second
 		self.timer = QTimer()
@@ -82,22 +118,23 @@ class UI(QMainWindow):
 			self.fishFeedingStatusResult.setText("Twice a day") 
 
 	def openFeedingScheduleDialog(self):
-		self.dialog = QDialog()
+		self.dialog = QDialog(self)
 		uic.loadUi(feedingScheduleDialogUI, self.dialog)
+
+		self.dialog.setGeometry(300, 150, 300, 300) # set the position of  the dialog
 
 		self.dialog.setWindowFlags(QtCore.Qt.FramelessWindowHint) # Make the main window frameless 
 		self.dialog.setAttribute(QtCore.Qt.WA_TranslucentBackground) # make the background translucent
-		self.dialog.setModal(True) # blocks all other windows in the application until it is closed.
 
 		# Access the QTimeEdit widget
 		self.firstSchedTime = self.dialog.findChild(QTimeEdit, "firstSchedTime")
 		self.secondSchedTime = self.dialog.findChild(QTimeEdit, "secondSchedTime")
 
-        # Set the first QTime edit based on the current first schedule
+		# Set the first QTime edit based on the current first schedule
 		first_feeding_sched_edit = QTime.fromString(self.firstSchedResult.text(), 'h:mm AP')
 		self.firstSchedTime.setTime(first_feeding_sched_edit)
 
-        # Set the second QTime edit based on the current first schedule
+		# Set the second QTime edit based on the current first schedule
 		second_feeding_sched_edit = QTime.fromString(self.secondSchedResult.text(), 'h:mm AP')
 		self.secondSchedTime.setTime(second_feeding_sched_edit)
 
@@ -109,12 +146,16 @@ class UI(QMainWindow):
 		cancelTimeBtn = self.dialog.findChild(QPushButton, "cancelTimeBtn")
 		cancelTimeBtn.clicked.connect(self.dialog.reject)
 
-
 		# Show the dialog
+		self.setTimeBtn.setEnabled(False)
+		self.feedNowBtn.setEnabled(False)
 		self.dialog.exec_()
+		self.setTimeBtn.setEnabled(True)
+		self.feedNowBtn.setEnabled(True)
+
 
 	def setTime(self):
-		# Get the time from the QTimeEdit widget as a QTime object and converted to String.
+		# Get the time from the QTimeEdit widget as a QTime object and converted to String.	
 		editted_first_sched = self.firstSchedTime.time()
 		editted_first_sched_str = editted_first_sched.toString('h:mm AP')
 
@@ -130,7 +171,7 @@ class UI(QMainWindow):
 			self.dialog.reject()
 		else:
 			self.openInvalidInputDialog()
-
+		
 	def validateTime(self, firstSchedTime, secondSchedTime):
 		if firstSchedTime == secondSchedTime:
 			return False
