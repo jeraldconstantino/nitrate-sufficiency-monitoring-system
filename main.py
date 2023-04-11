@@ -142,14 +142,34 @@ class UI(QMainWindow):
 		setTimeBtn = self.dialog.findChild(QPushButton, "setTimeBtn")
 		setTimeBtn.clicked.connect(self.setTime)
 
+		setTimeBtn.setStyleSheet("""
+			QPushButton {
+				background-color: #287194;
+				color: #fff;
+				border-radius: 15px;
+				padding: 5px 40px;
+				font: bold 12pt "Poppins";
+			}
+
+			QPushButton:hover {
+				background-color: #1F5773;
+			}
+
+			QPushButton:pressed {
+				background-color: #193D4D;
+			}
+		""")
+
+
 		# Close the SET TIME dialog
 		cancelTimeBtn = self.dialog.findChild(QPushButton, "cancelTimeBtn")
 		cancelTimeBtn.clicked.connect(self.dialog.reject)
 
-		# Show the dialog
 		self.setTimeBtn.setEnabled(False)
 		self.feedNowBtn.setEnabled(False)
-		self.dialog.exec_()
+		
+		self.dialog.exec_() # Show the dialog
+
 		self.setTimeBtn.setEnabled(True)
 		self.feedNowBtn.setEnabled(True)
 
@@ -178,9 +198,10 @@ class UI(QMainWindow):
 		return True
 	
 	def openInvalidInputDialog(self):
-		self.msg_box = QMessageBox()
+		self.msg_box = QMessageBox(self)
 		self.msg_box.setIcon(QMessageBox.Warning)
 		self.msg_box.setText("WARNING:\n\n The first and second schedules must not be at the same time.")
+		self.msg_box.setGeometry(300, 150, 300, 300) # set the position of  the dialog
 		
 		# Customized QMessageBox() 
 		font = QFont('Poppins', 12)
@@ -191,6 +212,7 @@ class UI(QMainWindow):
 				}
 				QMessageBox QLabel {
 						qproperty-alignment: AlignCenter;
+						background-color: transparent;
 				}
 		""")
 

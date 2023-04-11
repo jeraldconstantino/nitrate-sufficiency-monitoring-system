@@ -128,15 +128,22 @@ QLabel{
              <string notr="true"/>
             </property>
             <property name="text">
-             <string>First Feeding Schedule:</string>
+             <string>Morning Schedule:</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QTimeEdit" name="firstSchedTime">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="font">
              <font>
               <family>Poppins</family>
+              <pointsize>20</pointsize>
               <weight>75</weight>
               <bold>true</bold>
              </font>
@@ -147,12 +154,26 @@ QLabel{
     color: #000;
     border: 3px solid rgb(25, 61, 77);
     border-radius: 10px;
-    padding: 5px;
-    font-size: 20px;
 }</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::UpDownArrows</enum>
+            </property>
+            <property name="maximumTime">
+             <time>
+              <hour>11</hour>
+              <minute>59</minute>
+              <second>59</second>
+             </time>
+            </property>
+            <property name="currentSection">
+             <enum>QDateTimeEdit::HourSection</enum>
+            </property>
+            <property name="displayFormat">
+             <string>h:mm AP</string>
             </property>
            </widget>
           </item>
@@ -172,7 +193,7 @@ QLabel{
              </font>
             </property>
             <property name="text">
-             <string>Second Feeding Schedule:</string>
+             <string>Afternoon Schedule:</string>
             </property>
            </widget>
           </item>
@@ -181,6 +202,7 @@ QLabel{
             <property name="font">
              <font>
               <family>Poppins</family>
+              <pointsize>20</pointsize>
               <weight>75</weight>
               <bold>true</bold>
              </font>
@@ -191,12 +213,17 @@ QLabel{
     color: #000;
     border: 3px solid rgb(25, 61, 77);
     border-radius: 10px;
-    padding: 5px;
-    font-size: 20px;
 }</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
+            </property>
+            <property name="minimumTime">
+             <time>
+              <hour>12</hour>
+              <minute>0</minute>
+              <second>0</second>
+             </time>
             </property>
            </widget>
           </item>
