@@ -4,8 +4,8 @@ from time import sleep
 GPIO.setmode(GPIO.BCM)
 GPIO.setWarnings(False)
 
-RELAY_PIN = 21
-STOP_SENSOR_PIN = 22
+RELAY_PIN = 20
+STOP_SENSOR_PIN = 21
 DELAY = 1
 
 GPIO.setup(RELAY_PIN, GPIO.OUT)
