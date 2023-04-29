@@ -42,6 +42,9 @@ class UI(QMainWindow):
 		# QPushButtons widget
 		self.feedNowBtn = self.findChild(QPushButton, "feedNowBtn")
 		self.setTimeBtn = self.findChild(QPushButton, "setTimeBtn")
+		self.captureBtn = self.findChild(QPushButton, "captureBtn")
+		self.liveFeedBtn = self.findChild(QPushButton, "liveFeedBtn")
+		self.showFolderBtn = self.findChild(QPushButton, "showFolderBtn")
 
 		self.feedNowBtn.setStyleSheet("""
 			QPushButton {
@@ -62,6 +65,60 @@ class UI(QMainWindow):
 		""")
 
 		self.setTimeBtn.setStyleSheet("""
+			QPushButton {
+				background-color: #287194;
+				color: #fff;
+				border-radius: 15px;
+				padding: 10px 25px;
+				font: bold 12pt "Poppins";
+			}
+
+			QPushButton:hover {
+				background-color: #1F5773;
+			}
+
+			QPushButton:pressed {
+				background-color: #193D4D;
+			}
+		""")
+
+		self.captureBtn.setStyleSheet("""
+			QPushButton {
+				background-color: #287194;
+				color: #fff;
+				border-radius: 15px;
+				padding: 10px 25px;
+				font: bold 12pt "Poppins";
+			}
+
+			QPushButton:hover {
+				background-color: #1F5773;
+			}
+
+			QPushButton:pressed {
+				background-color: #193D4D;
+			}
+		""")
+
+		self.liveFeedBtn.setStyleSheet("""
+			QPushButton {
+				background-color: #287194;
+				color: #fff;
+				border-radius: 15px;
+				padding: 10px 25px;
+				font: bold 12pt "Poppins";
+			}
+
+			QPushButton:hover {
+				background-color: #1F5773;
+			}
+
+			QPushButton:pressed {
+				background-color: #193D4D;
+			}
+		""")
+
+		self.showFolderBtn.setStyleSheet("""
 			QPushButton {
 				background-color: #287194;
 				color: #fff;
