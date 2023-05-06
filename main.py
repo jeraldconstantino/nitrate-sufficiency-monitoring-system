@@ -6,20 +6,31 @@
 #       - Live detection.
 #       - Time schedule should display four schedules in case of deficient.
 #       - Capture and Show folder btns.
-#       - Add a Close btn.
+#
+#		If there's more time:
+#			FEATURES: Add settings for dropdown list of camera available
+#
 ######################################################################################################
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QDialog, QMessageBox, QTimeEdit, QFrame
-from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QDialog, QMessageBox, QTimeEdit, QFrame, QFileDialog
+from PyQt5.QtGui import QFont, QImage, QPixmap
 from RPiDevices.fishFeeder import feedNow
-from PyQt5.QtCore import QTime, QTimer
+from PyQt5.QtCore import QTime, QTimer, QThread, Qt, pyqtSignal
 from PyQt5 import uic, QtCore
 from datetime import datetime
 import sys
+import cv2
+import os
 
 # Declaration of the UI files
 mainWindowUI = "main.ui"
 feedingScheduleDialogUI = "feedingScheduleDialog.ui"
+
+# Detection of the location of camera connection
+cameraLocation = 0
+cameraHorizontalResolution = 1080
+cameraVerticalResolution = 720
+directory = 'C:/Users/jeral/OneDrive/Desktop/capture/'
 
 class UI(QMainWindow):
 	def __init__(self):
@@ -38,6 +49,7 @@ class UI(QMainWindow):
 		self.secondSchedResult = self.findChild(QLabel, "secondSchedResult")
 		self.class_result = self.findChild(QLabel, "classificationResultLabel")
 		self.fishFeedingStatusResult = self.findChild(QLabel, "fishFeedingStatusResult")
+		self.cameraPreview = self.findChild(QLabel, "cameraPreviewHolder")
 
 		# QPushButtons widget
 		self.feedNowBtn = self.findChild(QPushButton, "feedNowBtn")
@@ -48,6 +60,8 @@ class UI(QMainWindow):
 		self.minimizeBtn = self.findChild(QPushButton, "minimizeBtn")
 		self.exitBtn = self.findChild(QPushButton, "exitBtn")
 
+
+		# Customized button styles
 		self.feedNowBtn.setStyleSheet("""
 			QPushButton {
 				background-color: #287194;
@@ -174,7 +188,7 @@ class UI(QMainWindow):
 			}
 		""")
 
-		#Change the time stamp display per second
+		# Change the time stamp display per second
 		self.timer = QTimer()
 		self.timer.timeout.connect(self.fishFeedingSchedCounter)
 		self.timer.start(1000) # Timer updates every 1 second
@@ -187,9 +201,28 @@ class UI(QMainWindow):
 		self.setTimeBtn.clicked.connect(self.openFeedingScheduleDialog)
 
 		self.exitBtn.clicked.connect(QApplication.quit) # Close the App when clicked
-		self.minimizeBtn.clicked.connect(self.showMinimized) # Close the App when clicked
+		self.minimizeBtn.clicked.connect(self.showMinimized) # Minimize the App when clicked
 
+		# Initialize camera
+		self.camera = Camera()
+		self.camera.imageUpdate.connect(self.imageUpdateSlot)
+		self.camera.start()
+
+		self.captureBtn.clicked.connect(self.saveImage)
 		self.show()
+
+	def saveImage(self):
+		current_datetime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+		filename = f'{self.classificationResultLabel.text()}-{current_datetime}.png'
+		filepath = os.path.join(directory, filename)
+		
+		# turn it if user wants to decide to manually enter the directory and the file extension
+		# filepath = QFileDialog.getSaveFileName(filter="JPG(*.jpg);;PNG(*.png);;TIFF(*.tiff);;BMP(*.bmp)")[0]
+
+		pixmap = self.cameraPreview.pixmap() # Get the current pixmap from the camera preview
+		img = pixmap.toImage() # Get the pixel data from the pixmap
+		img.save(filepath)
+		print('Image saved as:', filepath)
 
 	def fishFeedingSchedCounter(self):
 		raw_current_datetime = datetime.now()
@@ -253,7 +286,6 @@ class UI(QMainWindow):
 		second_feeding_sched_edit = QTime.fromString(self.secondSchedResult.text(), 'h:mm AP')
 		self.secondSchedTime.setTime(second_feeding_sched_edit)
 
-		# self.setTimeBtn.clicked.connect(lambda: self.setTime(self, firstSchedTimeMW, secondSchedTimeMW))
 		setTimeBtn = self.dialog.findChild(QPushButton, "setTimeDialogBtn")
 		setTimeBtn.setStyleSheet("""
 			QPushButton {
@@ -279,14 +311,21 @@ class UI(QMainWindow):
 		cancelTimeBtn = self.dialog.findChild(QPushButton, "cancelTimeBtn")
 		cancelTimeBtn.clicked.connect(self.dialog.reject)
 
+		# Disabled all buttons while this dialog is open
 		self.setTimeBtn.setEnabled(False)
 		self.feedNowBtn.setEnabled(False)
-		
+		self.captureBtn.setEnabled(False)
+		self.liveFeedBtn.setEnabled(False)
+		self.showFolderBtn.setEnabled(False)
+
 		self.dialog.exec_() # Show the dialog
 
+		# Enabled all buttons when the dialog is close
 		self.setTimeBtn.setEnabled(True)
 		self.feedNowBtn.setEnabled(True)
-
+		self.captureBtn.setEnabled(True)
+		self.liveFeedBtn.setEnabled(True)
+		self.showFolderBtn.setEnabled(True)
 
 	def setTime(self):
 		# Get the time from the QTimeEdit widget as a QTime object and converted to String.	
@@ -342,6 +381,30 @@ class UI(QMainWindow):
 		""")
 		self.msg_box.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 		self.msg_box.exec_()
+
+	def imageUpdateSlot(self, image):
+		self.cameraPreview.setPixmap(QPixmap.fromImage(image))
+
+
+class Camera(QThread):
+	imageUpdate = pyqtSignal(QImage)
+
+	def run(self):
+		self.ThreadActive = True
+		capture = cv2.VideoCapture(cameraLocation)
+		while self.ThreadActive:
+			ret, frame = capture.read()
+			if ret:
+				image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+				flippedImage = cv2.flip(image, 1)
+				convertToQtFormat = QImage(flippedImage.data, flippedImage.shape[1], flippedImage.shape[0], QImage.Format_RGB888)
+				imageData = convertToQtFormat.scaled(cameraVerticalResolution, cameraHorizontalResolution, Qt.KeepAspectRatio)
+
+				self.imageUpdate.emit(imageData)
+
+	def stop(self):
+		self.ThreadActive = False
+		self.quit()
 
 # Initialize the App
 app = QApplication(sys.argv)
