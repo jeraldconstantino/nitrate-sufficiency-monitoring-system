@@ -4,21 +4,18 @@
 #       - Fish feeding btns should color in red pastel when the inference result is deficient.
 #       - Go Live! btn can be removed, and the capture should automatically turned to live detection.
 #       - Live detection.
-#       - Time schedule should display four schedules in case of deficient.
-#       - Capture and Show folder btns.
 #
 #		If there's more time:
 #			FEATURES: Add settings for dropdown list of camera available
 #
 ######################################################################################################
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QDialog, QMessageBox, QTimeEdit, QFrame
-from PyQt5.QtGui import QFont, QImage, QPixmap, QColor
+from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QDialog, QMessageBox, QTimeEdit, QFrame, QFileDialog
+from PyQt5.QtGui import QFont, QImage, QPixmap, QDesktopServices
 from RPiDevices.fishFeeder import feedNow
-from PyQt5.QtCore import QTime, QTimer, QThread, Qt, pyqtSignal
+from PyQt5.QtCore import QTime, QTimer, QThread, Qt, pyqtSignal, QUrl
 from PyQt5 import uic, QtCore
 from datetime import datetime
-from pyqt_toast import Toast
 import sys
 import cv2
 import os
@@ -210,7 +207,16 @@ class UI(QMainWindow):
 		self.camera.start()
 
 		self.captureBtn.clicked.connect(self.saveImage)
+		self.showFolderBtn.clicked.connect(self.openFileDialog)
 		self.show()
+
+	def openFileDialog(self):
+		options = QFileDialog.Options()
+		filetypes = "Image Files (*.png *.jpg *.jpeg *.bmp *.gif)"
+		filename, _ = QFileDialog.getOpenFileName(self, "Open File", directory, filetypes, options=options)
+		if filename:
+			url = QUrl.fromLocalFile(filename)
+			QDesktopServices.openUrl(url)
 
 	def fishFeedingSchedCounter(self):
 		raw_current_datetime = datetime.now()
@@ -355,7 +361,7 @@ class UI(QMainWindow):
 
 		# Set a timer to close the message box after 2 seconds
 		timer = QTimer()
-		timer.singleShot(2000, self.successMessageDialog.accept)
+		timer.singleShot(5000, self.successMessageDialog.accept)
 
 	def imageUpdateSlot(self, image):
 		self.cameraPreview.setPixmap(QPixmap.fromImage(image))

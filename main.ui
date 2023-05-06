@@ -743,7 +743,7 @@ QPushButton:pressed {
 }</string>
              </property>
              <property name="text">
-              <string>SHOW FOLDER</string>
+              <string>BROWSE FILE</string>
              </property>
             </widget>
            </item>
