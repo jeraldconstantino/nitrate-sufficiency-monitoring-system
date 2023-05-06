@@ -12,12 +12,13 @@
 #
 ######################################################################################################
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QDialog, QMessageBox, QTimeEdit, QFrame, QFileDialog
-from PyQt5.QtGui import QFont, QImage, QPixmap
+from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QDialog, QMessageBox, QTimeEdit, QFrame
+from PyQt5.QtGui import QFont, QImage, QPixmap, QColor
 from RPiDevices.fishFeeder import feedNow
 from PyQt5.QtCore import QTime, QTimer, QThread, Qt, pyqtSignal
 from PyQt5 import uic, QtCore
 from datetime import datetime
+from pyqt_toast import Toast
 import sys
 import cv2
 import os
@@ -35,7 +36,7 @@ directory = 'C:/Users/jeral/OneDrive/Desktop/capture/'
 class UI(QMainWindow):
 	def __init__(self):
 		super(UI, self).__init__()
-		
+
 		# Load the ui file
 		uic.loadUi(mainWindowUI, self)
 		
@@ -204,25 +205,12 @@ class UI(QMainWindow):
 		self.minimizeBtn.clicked.connect(self.showMinimized) # Minimize the App when clicked
 
 		# Initialize camera
-		self.camera = Camera()
+		self.camera = CameraWidget()
 		self.camera.imageUpdate.connect(self.imageUpdateSlot)
 		self.camera.start()
 
 		self.captureBtn.clicked.connect(self.saveImage)
 		self.show()
-
-	def saveImage(self):
-		current_datetime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-		filename = f'{self.classificationResultLabel.text()}-{current_datetime}.png'
-		filepath = os.path.join(directory, filename)
-		
-		# turn it if user wants to decide to manually enter the directory and the file extension
-		# filepath = QFileDialog.getSaveFileName(filter="JPG(*.jpg);;PNG(*.png);;TIFF(*.tiff);;BMP(*.bmp)")[0]
-
-		pixmap = self.cameraPreview.pixmap() # Get the current pixmap from the camera preview
-		img = pixmap.toImage() # Get the pixel data from the pixmap
-		img.save(filepath)
-		print('Image saved as:', filepath)
 
 	def fishFeedingSchedCounter(self):
 		raw_current_datetime = datetime.now()
@@ -251,8 +239,8 @@ class UI(QMainWindow):
 			mainFrame.setStyleSheet("""
 				QFrame {
 					background-color: rgb(250, 160, 160);
-					border-top-left-radius: 30px;
-    				border-top-right-radius: 30px;
+					border-top-left-radius: 20px;
+					border-top-right-radius: 20px;
 				}
 			""")
 		else:
@@ -260,8 +248,8 @@ class UI(QMainWindow):
 			mainFrame.setStyleSheet("""
 				QFrame {
 					background-color: rgb(211, 212, 206);
-					border-top-left-radius: 30px;
-    				border-top-right-radius: 30px;
+					border-top-left-radius: 20px;
+					border-top-right-radius: 20px;
 				}
 			""")
 
@@ -335,58 +323,59 @@ class UI(QMainWindow):
 		editted_second_sched = self.secondSchedTime.time()
 		editted_second_sched_str = editted_second_sched.toString('h:mm AP')
 		
-		isValidTime = self.validateTime(editted_first_sched_str, editted_second_sched_str)
+		# Set the editted time to the Time Schedule display.
+		self.firstSchedResult.setText(editted_first_sched_str)
+		self.secondSchedResult.setText(editted_second_sched_str)
+		self.dialog.reject()
 
-		if isValidTime == True:
-			# Set the editted time to the Time Schedule display.
-			self.firstSchedResult.setText(editted_first_sched_str)
-			self.secondSchedResult.setText(editted_second_sched_str)
-			self.dialog.reject()
-		else:
-			self.openInvalidInputDialog()
-		
-	def validateTime(self, firstSchedTime, secondSchedTime):
-		if firstSchedTime == secondSchedTime:
-			return False
-		return True
-	
-	def openInvalidInputDialog(self):
-		self.msg_box = QMessageBox(self)
-		self.msg_box.setIcon(QMessageBox.Warning)
-		self.msg_box.setText("WARNING:\n\n The first and second schedules must not be at the same time.")
-		self.msg_box.setGeometry(300, 150, 300, 300) # set the position of  the dialog
+	def successDialog(self):
+		self.successMessageDialog = QMessageBox(self)
+		icon = QPixmap("icon/success.svg")
+		self.successMessageDialog.setIconPixmap(icon)
+		self.successMessageDialog.setText("<b>SUCCESS!!</b> <br>Image successfully saved.")
+		self.successMessageDialog.setGeometry(700, 480, 300, 300) # set the position of  the dialog
 		
 		# Customized QMessageBox() 
 		font = QFont('Poppins', 12)
-		self.msg_box.setFont(font)
-		self.msg_box.setStyleSheet("""
+		self.successMessageDialog.setFont(font)
+		self.successMessageDialog.setStyleSheet("""
 				QMessageBox {
-						background-color: rgb(250, 160, 160);
+						background-color: rgba(25, 255, 96, 0.85);
+						border-radius: 12px;
 				}
 				QMessageBox QLabel {
-						qproperty-alignment: AlignCenter;
 						background-color: transparent;
 				}
 		""")
 
-		ok_button = self.msg_box.addButton(QMessageBox.Ok)
-		ok_button.setStyleSheet("""
-				QPushButton {
-						background-color: #F44336;
-						color: #fff;
-						border-radius: 15px;
-						padding: 10px 25px;
-						font: bold 10pt "Poppins";
-				}
-		""")
-		self.msg_box.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-		self.msg_box.exec_()
+		self.successMessageDialog.setStandardButtons(QMessageBox.NoButton)
+		self.successMessageDialog.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+
+		self.successMessageDialog.show()
+
+		# Set a timer to close the message box after 2 seconds
+		timer = QTimer()
+		timer.singleShot(2000, self.successMessageDialog.accept)
 
 	def imageUpdateSlot(self, image):
 		self.cameraPreview.setPixmap(QPixmap.fromImage(image))
+		
+	def saveImage(self):
+		current_datetime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+		filename = f'{self.classificationResultLabel.text()}-{current_datetime}.png'
+		filepath = os.path.join(directory, filename)
+		
+		# turn it if user wants to decide to manually enter the directory and the file extension
+		# filepath = QFileDialog.getSaveFileName(filter="JPG(*.jpg);;PNG(*.png);;TIFF(*.tiff);;BMP(*.bmp)")[0]
 
+		pixmap = self.cameraPreview.pixmap() # Get the current pixmap from the camera preview
+		img = pixmap.toImage() # Get the pixel data from the pixmap
+		img.save(filepath)
+		print('Image saved as:', filepath)
 
-class Camera(QThread):
+		self.successDialog()
+
+class CameraWidget(QThread):
 	imageUpdate = pyqtSignal(QImage)
 
 	def run(self):
