@@ -45,6 +45,8 @@ class UI(QMainWindow):
 		self.captureBtn = self.findChild(QPushButton, "captureBtn")
 		self.liveFeedBtn = self.findChild(QPushButton, "liveFeedBtn")
 		self.showFolderBtn = self.findChild(QPushButton, "showFolderBtn")
+		self.minimizeBtn = self.findChild(QPushButton, "minimizeBtn")
+		self.exitBtn = self.findChild(QPushButton, "exitBtn")
 
 		self.feedNowBtn.setStyleSheet("""
 			QPushButton {
@@ -87,7 +89,7 @@ class UI(QMainWindow):
 				background-color: #287194;
 				color: #fff;
 				border-radius: 15px;
-				padding: 10px 25px;
+				padding: 5px 25px;
 				font: bold 12pt "Poppins";
 			}
 
@@ -105,7 +107,7 @@ class UI(QMainWindow):
 				background-color: #287194;
 				color: #fff;
 				border-radius: 15px;
-				padding: 10px 25px;
+				padding: 5px 25px;
 				font: bold 12pt "Poppins";
 			}
 
@@ -123,7 +125,7 @@ class UI(QMainWindow):
 				background-color: #287194;
 				color: #fff;
 				border-radius: 15px;
-				padding: 10px 25px;
+				padding: 5px 25px;
 				font: bold 12pt "Poppins";
 			}
 
@@ -133,6 +135,42 @@ class UI(QMainWindow):
 
 			QPushButton:pressed {
 				background-color: #193D4D;
+			}
+		""")
+
+		self.minimizeBtn.setStyleSheet("""
+			QPushButton {
+				background-color: #193D4D;
+				color: #fff;
+				border-radius: 15px;
+				padding: 5px 15px;
+				font: bold 10pt "Poppins";
+			}
+
+			QPushButton:hover {
+				background-color: #1F5773;
+			}
+
+			QPushButton:pressed {
+				background-color: #287194;
+			}
+		""")
+
+		self.exitBtn.setStyleSheet("""
+			QPushButton {
+				background-color: #193D4D;
+				color: #fff;
+				border-radius: 15px;
+				padding: 5px 15px;
+				font: bold 10pt "Poppins";
+			}
+
+			QPushButton:hover {
+				background-color: #CD160D;
+			}
+
+			QPushButton:pressed {
+				background-color: #F45952;
 			}
 		""")
 
@@ -147,6 +185,10 @@ class UI(QMainWindow):
 
 		# Open the dialog when "SET TIME" button is clicked.
 		self.setTimeBtn.clicked.connect(self.openFeedingScheduleDialog)
+
+		self.exitBtn.clicked.connect(QApplication.quit) # Close the App when clicked
+		self.minimizeBtn.clicked.connect(self.showMinimized) # Close the App when clicked
+
 		self.show()
 
 	def fishFeedingSchedCounter(self):

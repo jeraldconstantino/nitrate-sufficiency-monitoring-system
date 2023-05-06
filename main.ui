@@ -51,7 +51,7 @@
      <number>0</number>
     </property>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,0">
       <property name="spacing">
        <number>0</number>
       </property>
@@ -287,6 +287,72 @@
          <set>Qt::AlignCenter</set>
         </property>
        </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>5</number>
+        </property>
+        <property name="rightMargin">
+         <number>20</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="minimizeBtn">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    background-color: #193D4D;
+    color: white;
+    padding: 5px 15px;
+}
+
+QPushButton:hover {
+    background-color: #1F5773;
+}
+
+QPushButton:pressed {
+    background-color: #287194;
+}</string>
+          </property>
+          <property name="text">
+           <string>—</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="exitBtn">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    background-color: #193D4D;
+    color: white;
+    padding: 5px 15px;
+}
+
+QPushButton:hover {
+    background-color: #CD160D;
+}
+
+QPushButton:pressed {
+    background-color: #F45952;
+}</string>
+          </property>
+          <property name="text">
+           <string>X</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
