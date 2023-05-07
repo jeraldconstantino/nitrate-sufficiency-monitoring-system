@@ -194,7 +194,7 @@ class UI(QMainWindow):
 		self.fishFeedingSchedCounter()
 
 		# Trigger the Fish Feeding Device to operate
-		# self.feedNowBtn.clicked.connect(a)
+		self.feedNowBtn.clicked.connect(self.onFeederActive(True))
 
 		# Open the dialog when "SET TIME" button is clicked.
 		self.setTimeBtn.clicked.connect(self.openFeedingScheduleDialog)
