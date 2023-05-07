@@ -40,7 +40,8 @@ class UI(QMainWindow):
 		
 		# Make the main window frameless
 		self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-		
+		self.showFullScreen()
+
 		# QLabel widget
 		self.timeLabel = self.findChild(QLabel, "timeLabel")
 		self.dateLabel = self.findChild(QLabel, "dateLabel")
@@ -101,7 +102,7 @@ class UI(QMainWindow):
 				background-color: #287194;
 				color: #fff;
 				border-radius: 15px;
-				padding: 5px 25px;
+				padding: 10px 25px;
 				font: bold 12pt "Poppins";
 			}
 
@@ -119,7 +120,7 @@ class UI(QMainWindow):
 				background-color: #287194;
 				color: #fff;
 				border-radius: 15px;
-				padding: 5px 25px;
+				padding: 10px 25px;
 				font: bold 12pt "Poppins";
 			}
 
@@ -137,7 +138,7 @@ class UI(QMainWindow):
 				background-color: #287194;
 				color: #fff;
 				border-radius: 15px;
-				padding: 5px 25px;
+				padding: 10px 25px;
 				font: bold 12pt "Poppins";
 			}
 
