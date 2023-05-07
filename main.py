@@ -155,7 +155,7 @@ class UI(QMainWindow):
 			QPushButton {
 				background-color: #193D4D;
 				color: #fff;
-				border-radius: 15px;
+				border-radius: 10px;
 				padding: 5px 15px;
 				font: bold 10pt "Poppins";
 			}
@@ -173,7 +173,7 @@ class UI(QMainWindow):
 			QPushButton {
 				background-color: #193D4D;
 				color: #fff;
-				border-radius: 15px;
+				border-radius: 10px;
 				padding: 5px 15px;
 				font: bold 10pt "Poppins";
 			}
@@ -199,7 +199,7 @@ class UI(QMainWindow):
 		# Open the dialog when "SET TIME" button is clicked.
 		self.setTimeBtn.clicked.connect(self.openFeedingScheduleDialog)
 
-		self.exitBtn.clicked.connect(QApplication.quit) # Close the App when clicked
+		self.exitBtn.clicked.connect(self.closeApp) # Close the App when clicked
 		self.minimizeBtn.clicked.connect(self.showMinimized) # Minimize the App when clicked
 
 		# Initialize camera
@@ -210,6 +210,10 @@ class UI(QMainWindow):
 		self.captureBtn.clicked.connect(self.saveImage)
 		self.showFolderBtn.clicked.connect(self.openFileDialog)
 		self.show()
+
+	def closeApp(self):
+		self.camera.stop()
+		QApplication.quit()
 
 	def fishFeedingSchedCounter(self):
 		raw_current_datetime = datetime.now()
