@@ -11,20 +11,21 @@
 ######################################################################################################
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QDialog, QMessageBox, QTimeEdit, QFrame, QFileDialog
+from PyQt5.QtCore import QTime, QTimer, QThread, Qt, pyqtSignal, QUrl
 from PyQt5.QtGui import QFont, QImage, QPixmap, QDesktopServices
 from RPiDevices.fishFeeder import feedNow
-from PyQt5.QtCore import QTime, QTimer, QThread, Qt, pyqtSignal, QUrl
 from PyQt5 import uic, QtCore
 from datetime import datetime
 import sys
 import cv2
 import os
 
-# Declaration of the UI files
+# Declaration of the UI files.
 mainWindowUI = "main.ui"
 feedingScheduleDialogUI = "feedingScheduleDialog.ui"
 
-# Detection of the location of camera connection
+# Detection of the location of camera connection.
+# Must be modified or calibrated to make it work with other device.
 cameraLocation = 0
 cameraHorizontalResolution = 1080
 cameraVerticalResolution = 720
@@ -57,7 +58,6 @@ class UI(QMainWindow):
 		self.showFolderBtn = self.findChild(QPushButton, "showFolderBtn")
 		self.minimizeBtn = self.findChild(QPushButton, "minimizeBtn")
 		self.exitBtn = self.findChild(QPushButton, "exitBtn")
-
 
 		# Customized button styles
 		self.feedNowBtn.setStyleSheet("""
@@ -209,14 +209,6 @@ class UI(QMainWindow):
 		self.captureBtn.clicked.connect(self.saveImage)
 		self.showFolderBtn.clicked.connect(self.openFileDialog)
 		self.show()
-
-	def openFileDialog(self):
-		options = QFileDialog.Options()
-		filetypes = "Image Files (*.png *.jpg *.jpeg *.bmp *.gif)"
-		filename, _ = QFileDialog.getOpenFileName(self, "Open File", directory, filetypes, options=options)
-		if filename:
-			url = QUrl.fromLocalFile(filename)
-			QDesktopServices.openUrl(url)
 
 	def fishFeedingSchedCounter(self):
 		raw_current_datetime = datetime.now()
@@ -377,9 +369,16 @@ class UI(QMainWindow):
 		pixmap = self.cameraPreview.pixmap() # Get the current pixmap from the camera preview
 		img = pixmap.toImage() # Get the pixel data from the pixmap
 		img.save(filepath)
-		print('Image saved as:', filepath)
 
 		self.successDialog()
+	
+	def openFileDialog(self):
+		options = QFileDialog.Options()
+		filetypes = "Image Files (*.png *.jpg *.jpeg *.bmp *.gif)"
+		filename, _ = QFileDialog.getOpenFileName(self, "Open File", directory, filetypes, options=options)
+		if filename:
+			url = QUrl.fromLocalFile(filename)
+			QDesktopServices.openUrl(url)
 
 class CameraWidget(QThread):
 	imageUpdate = pyqtSignal(QImage)
