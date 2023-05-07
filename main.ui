@@ -760,7 +760,6 @@ QPushButton:pressed {
               <string notr="true">QPushButton {
     background-color: #287194;
     color: white;
-    padding: 5px 25px;
 }
 
 QPushButton:hover {

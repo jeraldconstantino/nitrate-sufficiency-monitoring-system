@@ -13,7 +13,7 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QDialog, QMessageBox, QTimeEdit, QFrame, QFileDialog
 from PyQt5.QtCore import QTime, QTimer, QThread, Qt, pyqtSignal, QUrl
 from PyQt5.QtGui import QFont, QImage, QPixmap, QDesktopServices
-from RPiDevices.fishFeeder import feedNow
+import RPiDevices.fishFeeder as fd
 from PyQt5 import uic, QtCore
 from datetime import datetime
 import sys
@@ -194,7 +194,8 @@ class UI(QMainWindow):
 		self.fishFeedingSchedCounter()
 
 		# Trigger the Fish Feeding Device to operate
-		self.feedNowBtn.clicked.connect(feedNow)
+		self.fishFeederWidget = FishFeederWidget()
+		self.feedNowBtn.clicked.connect(self.fishFeederWidget.start())
 
 		# Open the dialog when "SET TIME" button is clicked.
 		self.setTimeBtn.clicked.connect(self.openFeedingScheduleDialog)
@@ -203,17 +204,13 @@ class UI(QMainWindow):
 		self.minimizeBtn.clicked.connect(self.showMinimized) # Minimize the App when clicked
 
 		# Initialize camera
-		self.camera = CameraWidget()
-		self.camera.imageUpdate.connect(self.imageUpdateSlot)
-		self.camera.start()
+		self.cameraWidget = CameraWidget()
+		self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
+		self.cameraWidget.start()
 
 		self.captureBtn.clicked.connect(self.saveImage)
 		self.showFolderBtn.clicked.connect(self.openFileDialog)
 		self.show()
-
-	def closeApp(self):
-		self.camera.stop()
-		QApplication.quit()
 
 	def fishFeedingSchedCounter(self):
 		raw_current_datetime = datetime.now()
@@ -231,7 +228,7 @@ class UI(QMainWindow):
 		second_feeding_sched = raw_second_feeding_sched.strftime("%I:%M:%S %p")
 		
 		if (formatted_current_time == first_feeding_sched or formatted_current_time == second_feeding_sched):
-			feedNow()
+			fd.feedNow()
 
 		mainFrame = self.findChild(QFrame, "mainFrame")
 
@@ -385,6 +382,10 @@ class UI(QMainWindow):
 			url = QUrl.fromLocalFile(filename)
 			QDesktopServices.openUrl(url)
 
+	def closeApp(self):
+		self.camera.stop()
+		QApplication.quit()
+
 class CameraWidget(QThread):
 	imageUpdate = pyqtSignal(QImage)
 
@@ -400,6 +401,16 @@ class CameraWidget(QThread):
 				imageData = convertToQtFormat.scaled(cameraVerticalResolution, cameraHorizontalResolution, Qt.KeepAspectRatio)
 
 				self.imageUpdate.emit(imageData)
+
+	def stop(self):
+		self.ThreadActive = False
+		self.quit()
+
+class FishFeederWidget(QThread):
+
+	def run(self):
+		self.ThreadActive = True
+		fd.feedNow
 
 	def stop(self):
 		self.ThreadActive = False
