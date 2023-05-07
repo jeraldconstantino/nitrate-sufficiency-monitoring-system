@@ -194,8 +194,7 @@ class UI(QMainWindow):
 		self.fishFeedingSchedCounter()
 
 		# Trigger the Fish Feeding Device to operate
-		self.fishFeederWidget = FishFeederWidget()
-		self.feedNowBtn.clicked.connect(self.fishFeederWidget.start())
+		# self.feedNowBtn.clicked.connect(a)
 
 		# Open the dialog when "SET TIME" button is clicked.
 		self.setTimeBtn.clicked.connect(self.openFeedingScheduleDialog)
@@ -203,14 +202,24 @@ class UI(QMainWindow):
 		self.exitBtn.clicked.connect(self.closeApp) # Close the App when clicked
 		self.minimizeBtn.clicked.connect(self.showMinimized) # Minimize the App when clicked
 
-		# Initialize camera
+		# Multithreading for Camera and Fish feeder widget
 		self.cameraWidget = CameraWidget()
+		self.fishFeederWidget = FishFeederWidget()
+
 		self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
+		self.fishFeederWidget.feederActive.connect(self.onFeederActive)
+
 		self.cameraWidget.start()
 
 		self.captureBtn.clicked.connect(self.saveImage)
 		self.showFolderBtn.clicked.connect(self.openFileDialog)
 		self.show()
+
+	def onFeederActive(self, active):
+		if active:
+			self.cameraThread.ThreadActive = True
+		else:
+			self.cameraThread.ThreadActive = False
 
 	def fishFeedingSchedCounter(self):
 		raw_current_datetime = datetime.now()
@@ -407,14 +416,13 @@ class CameraWidget(QThread):
 		self.quit()
 
 class FishFeederWidget(QThread):
+	feederActive = pyqtSignal(bool)
 
 	def run(self):
-		self.ThreadActive = True
-		fd.feedNow
+		self.feederActive.emit(True)
+		fd.feedNow()
+		self.feederActive.emit(False)
 
-	def stop(self):
-		self.ThreadActive = False
-		self.quit()
 
 # Initialize the App
 app = QApplication(sys.argv)
