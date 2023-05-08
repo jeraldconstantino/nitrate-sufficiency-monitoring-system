@@ -2,8 +2,8 @@
 # TODO: 
 #       - Set Time btn should store the edited time to the local database.
 #       - Fish feeding btns should color in red pastel when the inference result is deficient.
-#       - Go Live! btn can be removed, and the capture should automatically turned to live detection.
-#       - Live detection.
+#       - Start Detection button
+#	 	- Start Detection btn must turn on red while live feeding
 #
 #		If there's more time:
 #			FEATURES: Add settings for dropdown list of camera available
@@ -40,7 +40,7 @@ class UI(QMainWindow):
 		
 		# Make the main window frameless
 		self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-		self.showFullScreen()
+		# self.showFullScreen()
 
 		# QLabel widget
 		self.timeLabel = self.findChild(QLabel, "timeLabel")
@@ -284,7 +284,7 @@ class UI(QMainWindow):
 			QPushButton {
 				background-color: #287194;
 				color: #fff;
-				border-radius: 15px;
+				border-radius: 10px;
 				padding: 5px 40px;
 				font: bold 12pt "Poppins";
 			}
