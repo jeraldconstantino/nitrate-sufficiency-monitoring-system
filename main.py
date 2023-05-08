@@ -217,9 +217,9 @@ class UI(QMainWindow):
 
 	def onFeederActive(self, active):
 		if active:
-			self.cameraThread.ThreadActive = True
+			self.cameraWidget.ThreadActive = True
 		else:
-			self.cameraThread.ThreadActive = False
+			self.cameraWidget.ThreadActive = False
 
 	def fishFeedingSchedCounter(self):
 		raw_current_datetime = datetime.now()
