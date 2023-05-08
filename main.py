@@ -1,7 +1,6 @@
 ######################################################################################################
 # TODO: 
 #       - Set Time btn should store the edited time to the local database.
-#       - Fish feeding btns should color in red pastel when the inference result is deficient.
 #       - Start Detection button
 #	 	- Start Detection btn must turn on red while live feeding
 #
@@ -13,9 +12,9 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QDialog, QMessageBox, QTimeEdit, QFrame, QFileDialog
 from PyQt5.QtCore import QTime, QTimer, QThread, Qt, pyqtSignal, QUrl
 from PyQt5.QtGui import QFont, QImage, QPixmap, QDesktopServices
+from datetime import datetime, timedelta
 import RPiDevices.fishFeeder as fd
 from PyQt5 import uic, QtCore
-from datetime import datetime
 import sys
 import cv2
 import os
@@ -47,6 +46,11 @@ class UI(QMainWindow):
 		self.dateLabel = self.findChild(QLabel, "dateLabel")
 		self.firstSchedResult = self.findChild(QLabel, "firstSchedResult")
 		self.secondSchedResult = self.findChild(QLabel, "secondSchedResult")
+		self.thirdSchedResult = self.findChild(QLabel, "thirdSchedResult")
+		self.fourthSchedResult = self.findChild(QLabel, "fourthSchedResult")
+		self.secondSchedTitle = self.findChild(QLabel, "secondSchedTitle")
+		self.thirdSchedTitle = self.findChild(QLabel, "thirdSchedTitle")
+		self.fourthSchedTitle = self.findChild(QLabel, "fourthSchedTitle")
 		self.class_result = self.findChild(QLabel, "classificationResultLabel")
 		self.fishFeedingStatusResult = self.findChild(QLabel, "fishFeedingStatusResult")
 		self.cameraPreview = self.findChild(QLabel, "cameraPreviewHolder")
@@ -226,21 +230,45 @@ class UI(QMainWindow):
 		self.timeLabel.setText(formatted_current_time)
 
 		# Acquired feeding time for morning and afternoon schedule
-		raw_first_feeding_sched = datetime.strptime(self.firstSchedResult.text(), "%I:%M %p")
-		raw_second_feeding_sched = datetime.strptime(self.secondSchedResult.text(), "%I:%M %p")
-
-		first_feeding_sched = raw_first_feeding_sched.strftime("%I:%M:%S %p")
-		second_feeding_sched = raw_second_feeding_sched.strftime("%I:%M:%S %p")
+		rawMorningFeedingSched = datetime.strptime(self.firstSchedResult.text(), "%I:%M %p")
+		rawSecondFeedingSched = rawMorningFeedingSched + timedelta(hours=4) # dependent on first feeding schedule (4 hours advance)
 		
-		if (formatted_current_time == first_feeding_sched or formatted_current_time == second_feeding_sched):
+		if rawSecondFeedingSched.time() > datetime.strptime("12:00 PM", "%I:%M %p").time():
+			rawSecondFeedingSched = datetime.combine(rawSecondFeedingSched.date(), datetime.strptime("12:00 PM", "%I:%M %p").time())
+	
+		rawAfternoonFeedingSched = datetime.strptime(self.thirdSchedResult.text(), "%I:%M %p")
+		rawFourthFeedingSched = rawAfternoonFeedingSched + timedelta(hours=4) # dependent on third feeding schedule (4 hours advance)
+
+		# Check if the resulting time is later than 12:00 AM but earlier than 4:00 AM, and adjust it accordingly
+		if datetime.strptime("12:00 AM", "%I:%M %p").time() <= rawFourthFeedingSched.time() < datetime.strptime("4:00 AM", "%I:%M %p").time():
+			rawFourthFeedingSched = datetime.combine(rawFourthFeedingSched.date(), datetime.strptime("12:00 AM", "%I:%M %p").time())
+
+		firstFeedingSched = rawMorningFeedingSched.strftime("%I:%M:%S %p")
+		secondFeedingSched = rawSecondFeedingSched.strftime("%I:%M:%S %p")
+		thirdFeedingSched = rawAfternoonFeedingSched.strftime("%I:%M:%S %p")
+		fourthFeedingSched = rawFourthFeedingSched.strftime("%I:%M:%S %p")
+
+
+		if (formatted_current_time == firstFeedingSched or formatted_current_time == thirdFeedingSched):
 			self.activateFishFeeder()
 
 		mainFrame = self.findChild(QFrame, "mainFrame")
+		cameraPreviewHolder = self.findChild(QLabel,"cameraPreviewHolder")
 
 		# Updates the fish feeding status based on the inference result.
-		class_result = self.classificationResultLabel.text()
-		if (class_result.lower() == "deficient"):
+		classResult = self.classificationResultLabel.text()
+		if (classResult.lower() == "deficient"):
 			self.fishFeedingStatusResult.setText("Four times a day")
+			self.secondSchedTitle.show()
+			self.secondSchedResult.show()
+			self.secondSchedResult.setText(rawSecondFeedingSched.strftime("%I:%M %p").lstrip('0'))
+
+			self.thirdSchedTitle.setText("3rd:")
+
+			self.fourthSchedTitle.show()
+			self.fourthSchedResult.show()
+			self.fourthSchedResult.setText(rawFourthFeedingSched.strftime("%I:%M %p").lstrip('0'))
+
 			mainFrame.setStyleSheet("""
 				QFrame {
 					background-color: rgb(250, 160, 160);
@@ -248,8 +276,116 @@ class UI(QMainWindow):
 					border-top-right-radius: 20px;
 				}
 			""")
+
+			cameraPreviewHolder.setStyleSheet("""
+				QLabel {
+					background-color: rgba(255, 255, 255, 0);
+					color: rgba(0, 0, 0, 255);
+					border: 3px solid #A40808;
+					border-radius: 5px;
+				}
+			""")
+
+			self.feedNowBtn.setStyleSheet("""
+				QPushButton {
+					background-color: #A40808;
+					color: #fff;
+					border-radius: 15px;
+					padding: 10px 25px;
+					font: bold 12pt "Poppins";
+				}
+
+				QPushButton:hover {
+					background-color: #F42020;
+				}
+
+				QPushButton:pressed {
+					background-color: #F65050;
+				}
+			""")
+			
+			self.setTimeBtn.setStyleSheet("""
+				QPushButton {
+					background-color: #A40808;
+					color: #fff;
+					border-radius: 15px;
+					padding: 10px 25px;
+					font: bold 12pt "Poppins";
+				}
+
+				QPushButton:hover {
+					background-color: #F42020;
+				}
+
+				QPushButton:pressed {
+					background-color: #F65050;
+				}
+			""")
+
+			self.showFolderBtn.setStyleSheet("""
+				QPushButton {
+					background-color: #A40808;
+					color: #fff;
+					border-radius: 15px;
+					padding: 10px 25px;
+					font: bold 12pt "Poppins";
+				}
+
+				QPushButton:hover {
+					background-color: #F42020;
+				}
+
+				QPushButton:pressed {
+					background-color: #F65050;
+				}
+			""")	
+
+			self.captureBtn.setStyleSheet("""
+				QPushButton {
+					background-color: #A40808;
+					color: #fff;
+					border-radius: 15px;
+					padding: 10px 25px;
+					font: bold 12pt "Poppins";
+				}
+
+				QPushButton:hover {
+					background-color: #F42020;
+				}
+
+				QPushButton:pressed {
+					background-color: #F65050;
+				}
+			""")
+
+			self.liveFeedBtn.setStyleSheet("""
+				QPushButton {
+					background-color: #A40808;
+					color: #fff;
+					border-radius: 15px;
+					padding: 10px 25px;
+					font: bold 12pt "Poppins";
+				}
+
+				QPushButton:hover {
+					background-color: #F42020;
+				}
+
+				QPushButton:pressed {
+					background-color: #F65050;
+				}
+			""")		
+
 		else:
 			self.fishFeedingStatusResult.setText("Twice a day") 
+			self.secondSchedTitle.hide()
+			self.secondSchedResult.hide()
+
+			self.thirdSchedTitle.setText("2nd:")
+
+			self.fourthSchedTitle.hide()
+			self.fourthSchedResult.hide()
+
 			mainFrame.setStyleSheet("""
 				QFrame {
 					background-color: rgb(211, 212, 206);
@@ -271,13 +407,13 @@ class UI(QMainWindow):
 		self.firstSchedTime = self.dialog.findChild(QTimeEdit, "firstSchedTime")
 		self.secondSchedTime = self.dialog.findChild(QTimeEdit, "secondSchedTime")
 
-		# Set the first QTime edit based on the current first schedule
-		first_feeding_sched_edit = QTime.fromString(self.firstSchedResult.text(), 'h:mm AP')
-		self.firstSchedTime.setTime(first_feeding_sched_edit)
+		# Set the morning QTime edit based on the current first schedule
+		morningFeedingSchedEdit = QTime.fromString(self.firstSchedResult.text(), 'h:mm AP')
+		self.firstSchedTime.setTime(morningFeedingSchedEdit)
 
-		# Set the second QTime edit based on the current first schedule
-		second_feeding_sched_edit = QTime.fromString(self.secondSchedResult.text(), 'h:mm AP')
-		self.secondSchedTime.setTime(second_feeding_sched_edit)
+		# Set the afternoon QTime edit based on the current first schedule
+		afternoonFeedingSchedEdit = QTime.fromString(self.thirdSchedResult.text(), 'h:mm AP')
+		self.secondSchedTime.setTime(afternoonFeedingSchedEdit)
 
 		setTimeBtn = self.dialog.findChild(QPushButton, "setTimeDialogBtn")
 		setTimeBtn.setStyleSheet("""
@@ -322,15 +458,15 @@ class UI(QMainWindow):
 
 	def setTime(self):
 		# Get the time from the QTimeEdit widget as a QTime object and converted to String.	
-		editted_first_sched = self.firstSchedTime.time()
-		editted_first_sched_str = editted_first_sched.toString('h:mm AP')
+		edittedMorningSched = self.firstSchedTime.time()
+		edittedMorningSchedStr = edittedMorningSched.toString('h:mm AP')
 
-		editted_second_sched = self.secondSchedTime.time()
-		editted_second_sched_str = editted_second_sched.toString('h:mm AP')
+		edittedAfternoonSched = self.secondSchedTime.time()
+		edittedAfternoonSchedStr = edittedAfternoonSched.toString('h:mm AP')
 		
 		# Set the editted time to the Time Schedule display.
-		self.firstSchedResult.setText(editted_first_sched_str)
-		self.secondSchedResult.setText(editted_second_sched_str)
+		self.firstSchedResult.setText(edittedMorningSchedStr)
+		self.thirdSchedResult.setText(edittedAfternoonSchedStr)
 		self.dialog.reject()
 
 	def successDialog(self):
