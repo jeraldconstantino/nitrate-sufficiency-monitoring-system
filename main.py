@@ -215,6 +215,7 @@ class UI(QMainWindow):
 
 	def activateFishFeeder(self):
 		self.fishFeederWidget.start()
+		self.fishFeederWidget.stop()
 
 	def fishFeedingSchedCounter(self):
 		raw_current_datetime = datetime.now()
@@ -388,7 +389,6 @@ class UI(QMainWindow):
 
 	def closeApp(self):
 		self.cameraWidget.stop()
-		self.fishFeederWidget.stop()
 		QApplication.quit()
 
 class CameraWidget(QThread):
