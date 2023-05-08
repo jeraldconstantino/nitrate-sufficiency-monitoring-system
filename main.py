@@ -199,25 +199,23 @@ class UI(QMainWindow):
 		self.exitBtn.clicked.connect(self.closeApp) # Close the App when clicked
 		self.minimizeBtn.clicked.connect(self.showMinimized) # Minimize the App when clicked
 
-		# Trigger the Fish Feeding Device to operate
-		fishfeederState = False
-		self.feedNowBtn.clicked.connect(self.activateFishFeeder(fishfeederState))
+
 
 		# Multithreading for Camera and Fish feeder widget
 		self.cameraWidget = CameraWidget()
 		self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
 		self.cameraWidget.start()
 
-		self.fishFeederWidget = FishFeederWidget(fishfeederState)
-		self.fishFeederWidget.start()
+		# Trigger the Fish Feeding Device to operate
+		self.feedNowBtn.clicked.connect(self.activateFishFeeder)
 
 		self.captureBtn.clicked.connect(self.saveImage)
 		self.showFolderBtn.clicked.connect(self.openFileDialog)
 		self.show()
 
-	def activateFishFeeder(self, fishFeederState):
-		fishFeederState = True
-		return fishFeederState
+	def activateFishFeeder(self):
+		self.fishFeederWidget = FishFeederWidget()
+		self.fishFeederWidget.start()
 
 	def fishFeedingSchedCounter(self):
 		raw_current_datetime = datetime.now()
@@ -417,17 +415,8 @@ class CameraWidget(QThread):
 		self.quit()
 
 class FishFeederWidget(QThread):	
-	def __init__(self, fishfeederState):
-		super().__init__()
-		self.fishfeederState = fishfeederState
-
 	def run(self):
-		if self.fishFeederState == True:
-			fd.feedNow
-			self.fishFeederState = False
-
-	def stop(self):
-		self.quit()
+		fd.feedNow
 
 # Initialize the App
 app = QApplication(sys.argv)
