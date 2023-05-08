@@ -416,7 +416,8 @@ class CameraWidget(QThread):
 
 class FishFeederWidget(QThread):	
 	def run(self):
-		fd.feedNow
+		print("I am running")
+		fd.feedNow()
 
 # Initialize the App
 app = QApplication(sys.argv)
