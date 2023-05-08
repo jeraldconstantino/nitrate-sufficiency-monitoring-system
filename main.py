@@ -31,9 +31,6 @@ cameraHorizontalResolution = 1080
 cameraVerticalResolution = 720
 directory = 'C:/Users/jeral/OneDrive/Desktop/capture/'
 
-# fish feeder status holder
-fishFeederState = False
-
 class UI(QMainWindow):
 	def __init__(self):
 		super(UI, self).__init__()
@@ -203,21 +200,22 @@ class UI(QMainWindow):
 		self.minimizeBtn.clicked.connect(self.showMinimized) # Minimize the App when clicked
 
 		# Trigger the Fish Feeding Device to operate
-		self.feedNowBtn.clicked.connect(self.activateFishFeeder)
+		fishfeederState = False
+		self.feedNowBtn.clicked.connect(self.activateFishFeeder(fishfeederState))
 
 		# Multithreading for Camera and Fish feeder widget
 		self.cameraWidget = CameraWidget()
 		self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
 		self.cameraWidget.start()
 
-		self.fishFeederWidget = FishFeederWidget()
+		self.fishFeederWidget = FishFeederWidget(fishfeederState)
 		self.fishFeederWidget.start()
 
 		self.captureBtn.clicked.connect(self.saveImage)
 		self.showFolderBtn.clicked.connect(self.openFileDialog)
 		self.show()
 
-	def activateFishFeeder(self):
+	def activateFishFeeder(self, fishFeederState):
 		fishFeederState = True
 		return fishFeederState
 
@@ -419,13 +417,14 @@ class CameraWidget(QThread):
 		self.quit()
 
 class FishFeederWidget(QThread):	
-	def __init__(self):
+	def __init__(self, fishfeederState):
 		super().__init__()
+		self.fishfeederState = fishfeederState
 
 	def run(self):
-		if fishFeederState == True:
+		if self.fishFeederState == True:
 			fd.feedNow
-			fishFeederState = False
+			self.fishFeederState = False
 
 	def stop(self):
 		self.quit()
