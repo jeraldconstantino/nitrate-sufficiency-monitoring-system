@@ -10,8 +10,8 @@
 ######################################################################################################
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QDialog, QMessageBox, QTimeEdit, QFrame, QFileDialog
+from PyQt5.QtGui import QFont, QImage, QPixmap, QDesktopServices, QIcon
 from PyQt5.QtCore import QTime, QTimer, QThread, Qt, pyqtSignal, QUrl
-from PyQt5.QtGui import QFont, QImage, QPixmap, QDesktopServices
 from datetime import datetime, timedelta
 import RPiDevices.fishFeeder as fd
 from PyQt5 import uic, QtCore
@@ -39,7 +39,10 @@ class UI(QMainWindow):
 		
 		# Make the main window frameless
 		self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-		# self.showFullScreen()
+		self.showFullScreen()
+
+		# Set the logo of the application
+		self.setWindowIcon(QIcon('icon\logo.svg'))
 
 		# QLabel widget
 		self.timeLabel = self.findChild(QLabel, "timeLabel")
