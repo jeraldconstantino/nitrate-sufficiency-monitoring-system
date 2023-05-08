@@ -1031,7 +1031,7 @@ QPushButton:pressed {
          <item>
           <layout class="QVBoxLayout" name="timeScheduleLayout">
            <property name="spacing">
-            <number>10</number>
+            <number>5</number>
            </property>
            <property name="bottomMargin">
             <number>10</number>
