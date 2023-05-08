@@ -808,7 +808,7 @@ QPushButton:pressed {
        <item>
         <layout class="QVBoxLayout" name="fishFeederLayout" stretch="0,0,0,0,0,0,0">
          <property name="spacing">
-          <number>8</number>
+          <number>20</number>
          </property>
          <item>
           <spacer name="verticalSpacer_2">
