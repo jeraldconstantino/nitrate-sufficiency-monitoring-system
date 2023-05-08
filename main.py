@@ -40,7 +40,7 @@ class UI(QMainWindow):
 		
 		# Make the main window frameless
 		self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-		# self.showFullScreen()
+		self.showFullScreen()
 
 		# QLabel widget
 		self.timeLabel = self.findChild(QLabel, "timeLabel")
@@ -233,7 +233,7 @@ class UI(QMainWindow):
 		second_feeding_sched = raw_second_feeding_sched.strftime("%I:%M:%S %p")
 		
 		if (formatted_current_time == first_feeding_sched or formatted_current_time == second_feeding_sched):
-			fd.feedNow()
+			self.activateFishFeeder
 
 		mainFrame = self.findChild(QFrame, "mainFrame")
 
@@ -416,7 +416,6 @@ class CameraWidget(QThread):
 
 class FishFeederWidget(QThread):	
 	def run(self):
-		print("I am running")
 		fd.feedNow()
 
 # Initialize the App
