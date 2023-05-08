@@ -31,6 +31,9 @@ cameraHorizontalResolution = 1080
 cameraVerticalResolution = 720
 directory = 'C:/Users/jeral/OneDrive/Desktop/capture/'
 
+# fish feeder status holder
+fishFeederState = False
+
 class UI(QMainWindow):
 	def __init__(self):
 		super(UI, self).__init__()
@@ -199,27 +202,24 @@ class UI(QMainWindow):
 		self.exitBtn.clicked.connect(self.closeApp) # Close the App when clicked
 		self.minimizeBtn.clicked.connect(self.showMinimized) # Minimize the App when clicked
 
+		# Trigger the Fish Feeding Device to operate
+		self.feedNowBtn.clicked.connect(self.activateFishFeeder)
+
 		# Multithreading for Camera and Fish feeder widget
 		self.cameraWidget = CameraWidget()
-		self.fishFeederWidget = FishFeederWidget()
-
 		self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
-		self.fishFeederWidget.feederActive.connect(self.onFeederActive)
-
 		self.cameraWidget.start()
 
-		# Trigger the Fish Feeding Device to operate
-		self.feedNowBtn.clicked.connect(self.fishFeederWidget.start)
+		self.fishFeederWidget = FishFeederWidget()
+		self.fishFeederWidget.start()
 
 		self.captureBtn.clicked.connect(self.saveImage)
 		self.showFolderBtn.clicked.connect(self.openFileDialog)
 		self.show()
 
-	def onFeederActive(self, active):
-		if active:
-			self.cameraWidget.ThreadActive = True
-		else:
-			self.cameraWidget.ThreadActive = False
+	def activateFishFeeder(self):
+		fishFeederState = True
+		return fishFeederState
 
 	def fishFeedingSchedCounter(self):
 		raw_current_datetime = datetime.now()
@@ -397,6 +397,9 @@ class UI(QMainWindow):
 
 class CameraWidget(QThread):
 	imageUpdate = pyqtSignal(QImage)
+	
+	def __init__(self):
+		super().__init__()
 
 	def run(self):
 		self.ThreadActive = True
@@ -415,14 +418,17 @@ class CameraWidget(QThread):
 		self.ThreadActive = False
 		self.quit()
 
-class FishFeederWidget(QThread):
-	feederActive = pyqtSignal(bool)
+class FishFeederWidget(QThread):	
+	def __init__(self):
+		super().__init__()
 
 	def run(self):
-		self.feederActive.emit(True)
-		fd.feedNow()
-		self.feederActive.emit(False)
+		if fishFeederState == True:
+			fd.feedNow
+			fishFeederState = False
 
+	def stop(self):
+		self.quit()
 
 # Initialize the App
 app = QApplication(sys.argv)
