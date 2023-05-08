@@ -40,7 +40,7 @@ class UI(QMainWindow):
 		
 		# Make the main window frameless
 		self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-		self.showFullScreen()
+		# self.showFullScreen()
 
 		# QLabel widget
 		self.timeLabel = self.findChild(QLabel, "timeLabel")
@@ -193,9 +193,6 @@ class UI(QMainWindow):
 		self.timer.start(1000) # Timer updates every 1 second
 		self.fishFeedingSchedCounter()
 
-		# Trigger the Fish Feeding Device to operate
-		self.feedNowBtn.clicked.connect(self.onFeederActive(True))
-
 		# Open the dialog when "SET TIME" button is clicked.
 		self.setTimeBtn.clicked.connect(self.openFeedingScheduleDialog)
 
@@ -210,6 +207,9 @@ class UI(QMainWindow):
 		self.fishFeederWidget.feederActive.connect(self.onFeederActive)
 
 		self.cameraWidget.start()
+
+		# Trigger the Fish Feeding Device to operate
+		self.feedNowBtn.clicked.connect(self.fishFeederWidget.start)
 
 		self.captureBtn.clicked.connect(self.saveImage)
 		self.showFolderBtn.clicked.connect(self.openFileDialog)
@@ -392,7 +392,7 @@ class UI(QMainWindow):
 			QDesktopServices.openUrl(url)
 
 	def closeApp(self):
-		self.camera.stop()
+		self.cameraWidget.stop()
 		QApplication.quit()
 
 class CameraWidget(QThread):
