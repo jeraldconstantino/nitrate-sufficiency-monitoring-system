@@ -29,8 +29,8 @@ feedingScheduleDialogUI = "feedingScheduleDialog.ui"
 directory = 'C:/Users/jeral/OneDrive/Desktop/capture/'
 model = YOLO("model/best.pt")
 windowLogoPath = "icon/logo.svg"
-loadingIndicatorPath = "gif/loading_indicator.gif"
-
+successIconPath = "icon/success.svg"
+loadingIndicatorPath = "gif\loading_indicator.gif"
 
 class UI(QMainWindow):
 	def __init__(self):
@@ -234,7 +234,7 @@ class UI(QMainWindow):
 
 	def startLiveFeed(self):
 		if self.liveFeedBtn.isChecked():
-			self.loadingScreen = LoadingScreen() # Create an instance of loading screen
+			self.loadingScreen = LoadingScreen(self) # Create an instance of loading screen
 			self.cameraWidget.stop() # stop the normal camera to operate
 			sleep(1)
 			self.cameraWidget = CameraWidget(1) # initialize the classification model
@@ -260,7 +260,7 @@ class UI(QMainWindow):
 			""")
 			self.liveFeedBtn.setText("STOP DETECTION")
 		else:
-			self.loadingScreen = LoadingScreen() # Create an instance of loading screen
+			self.loadingScreen = LoadingScreen(self) # Create an instance of loading screen
 			self.cameraWidget.stop() # stop detection
 			sleep(1)
 			self.cameraWidget = CameraWidget(0) # initialize the normal camera
@@ -535,7 +535,7 @@ class UI(QMainWindow):
 
 	def successDialog(self):
 		self.successMessageDialog = QMessageBox(self)
-		icon = QPixmap("icon/success.svg")
+		icon = QPixmap(successIconPath)
 		self.successMessageDialog.setIconPixmap(icon)
 		self.successMessageDialog.setText("<b>SUCCESS!!</b> <br>Image successfully saved.")
 		self.successMessageDialog.setGeometry(700, 480, 300, 300) # set the position of  the dialog
@@ -629,19 +629,19 @@ class FishFeederWidget(QThread):
 		self.quit()
 
 class LoadingScreen(QWidget):
-	def __init__(self):
-		super().__init__()
+	def __init__(self, parent=None):
+		super().__init__(parent)
 		self.setFixedSize(200, 200)
-		self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint)
 		self.setGeometry(300, 200, 300, 300) # set the position of  the dialog
-
+		self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint)
+	
 		self.labelAnimation = QLabel(self)
 		self.movie = QMovie(loadingIndicatorPath)
 		self.labelAnimation.setMovie(self.movie)
 
 		timer = QTimer(self)
 		self.startAnimation()
-		timer.singleShot(7500, self.stopAnimation)
+		timer.singleShot(3500, self.stopAnimation)
 		self.show()
 
 	def startAnimation(self):
