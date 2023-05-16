@@ -1,29 +1,26 @@
 ######################################################################################################
 # TODO: 
 #       - Set Time btn should store the edited time to the local database.
-#       - Start Detection button
-#	 	- Start Detection btn must turn on red while live feeding
 #
 #		If there's more time:
 #			FEATURES: Add settings for dropdown list of camera available
 #
 ######################################################################################################
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QDialog, QMessageBox, QTimeEdit, QFrame, QFileDialog
-from PyQt5.QtGui import QFont, QImage, QPixmap, QDesktopServices, QIcon
+from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QDialog, QMessageBox, QTimeEdit, QFrame, QFileDialog, QWidget
+from PyQt5.QtGui import QFont, QImage, QPixmap, QDesktopServices, QIcon, QMovie
 from PyQt5.QtCore import QTime, QTimer, QThread, Qt, pyqtSignal, QUrl
 from datetime import datetime, timedelta
 import RPiDevices.fishFeeder as fd
 from PyQt5 import uic, QtCore
 from ultralytics import YOLO
-from PIL import Image
+from time import sleep
 import sys
 import cv2
 import os
 
-# Detection of the location of camera connection.
 # Must be modified or calibrated to make it work with other device.
-cameraLocation = 0
+cameraLocation = 0 # Detection of the location of camera connection.
 cameraHorizontalResolution = 1080
 cameraVerticalResolution = 720
 
@@ -33,6 +30,7 @@ feedingScheduleDialogUI = "feedingScheduleDialog.ui"
 directory = 'C:/Users/jeral/OneDrive/Desktop/capture/'
 model = YOLO("model/best.pt")
 windowLogoPath = "icon/logo.svg"
+loadingIndicatorPath = "gif/loading_indicator.gif"
 
 
 class UI(QMainWindow):
@@ -212,12 +210,11 @@ class UI(QMainWindow):
 		self.minimizeBtn.clicked.connect(self.showMinimized) # Minimize the App when clicked
 
 		# Multithreading for Camera and Fish feeder widget
-		self.cameraWidget = CameraWidget()
+		self.cameraWidget = CameraWidget(0)
 		self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
 		self.cameraWidget.start()
 
 		self.fishFeederWidget = FishFeederWidget() # Instances of fish feeder
-		self.classificationModel = ClassificationModel() # Instances for classification model
 
 		# Trigger the Fish Feeding Device to operate
 		self.feedNowBtn.clicked.connect(self.activateFishFeeder)
@@ -229,6 +226,7 @@ class UI(QMainWindow):
 
 		self.captureBtn.clicked.connect(self.saveImage)
 		self.showFolderBtn.clicked.connect(self.openFileDialog)
+
 		self.show()
 
 	def activateFishFeeder(self):
@@ -237,9 +235,12 @@ class UI(QMainWindow):
 
 	def startLiveFeed(self):
 		if self.liveFeedBtn.isChecked():
+			self.loadingScreen = LoadingScreen() # Create an instance of loading screen
 			self.cameraWidget.stop() # stop the normal camera to operate
-			self.classificationModel.imageUpdate.connect(self.imageUpdateSlot)
-			self.classificationModel.start() # start detection
+			self.cameraWidget = CameraWidget(1) # initialize the classification model
+			self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
+			self.cameraWidget.start() # start detection
+
 			self.liveFeedBtn.setStyleSheet("""
 				QPushButton {
 					background-color: #A40808;
@@ -259,8 +260,8 @@ class UI(QMainWindow):
 			""")
 			self.liveFeedBtn.setText("STOP DETECTION")
 		else:
-			self.classificationModel.stop() # stop detection
-			self.cameraWidget = CameraWidget() # initialize the normal camera
+			self.cameraWidget.stop() # stop detection
+			self.cameraWidget = CameraWidget(0) # initialize the normal camera
 			self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
 			self.cameraWidget.start() # start the normal camera
 			self.liveFeedBtn.setStyleSheet("""
@@ -591,45 +592,29 @@ class UI(QMainWindow):
 class CameraWidget(QThread):
 	imageUpdate = pyqtSignal(QImage)
 	
-	def __init__(self):
+	def __init__(self, liveFeedStatus):
 		super().__init__()
+		self.liveFeedStatus = liveFeedStatus
 
 	def run(self):
 		self.ThreadActive = True
 		capture = cv2.VideoCapture(cameraLocation)
-	
 		while self.ThreadActive:
 			ret, frame = capture.read()
 			if ret:
-				image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-				convertToQtFormat = QImage(image.data, image.shape[1], image.shape[0], QImage.Format_RGB888)
-				imageData = convertToQtFormat.scaled(cameraVerticalResolution, cameraHorizontalResolution, Qt.KeepAspectRatio)
-				self.imageUpdate.emit(imageData)
+				if self.liveFeedStatus == 0:
+					self.displayFrame(frame)
+				elif self.liveFeedStatus == 1:
+					predictions = model(frame)
+					annotatedFrame = predictions[0].plot()
+					self.displayFrame(annotatedFrame)
 
-	def stop(self):
-		self.ThreadActive = False
-		self.quit()
+	def displayFrame(self, frame):
+		image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+		convertToQtFormat = QImage(image.data, image.shape[1], image.shape[0], QImage.Format_RGB888)
+		imageData = convertToQtFormat.scaled(cameraVerticalResolution, cameraHorizontalResolution, Qt.KeepAspectRatio)
+		self.imageUpdate.emit(imageData)
 
-class ClassificationModel(QThread):
-	imageUpdate = pyqtSignal(QImage)
-	
-	def __init__(self):
-		super().__init__()
-
-	def run(self):
-		self.ThreadActive = True
-		capture = cv2.VideoCapture(cameraLocation)
-	
-		while self.ThreadActive:
-			ret, frame = capture.read()
-			if ret:
-				predictions = model(frame)
-				annotatedFrame = predictions[0].plot()
-				image = cv2.cvtColor(annotatedFrame, cv2.COLOR_BGR2RGB)
-				convertToQtFormat = QImage(image.data, image.shape[1], image.shape[0], QImage.Format_RGB888)
-				imageData = convertToQtFormat.scaled(cameraVerticalResolution, cameraHorizontalResolution, Qt.KeepAspectRatio)
-				self.imageUpdate.emit(imageData)
-					
 	def stop(self):
 		self.ThreadActive = False
 		self.quit()
@@ -641,6 +626,28 @@ class FishFeederWidget(QThread):
 	def stop(self):
 		self.quit()
 
+class LoadingScreen(QWidget):
+	def __init__(self):
+		super().__init__()
+		self.setFixedSize(200, 200)
+		self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint)
+
+		self.labelAnimation = QLabel(self)
+		self.movie = QMovie('gif/loading_indicator.gif')
+		self.labelAnimation.setMovie(self.movie)
+
+		timer = QTimer(self)
+		self.startAnimation()
+		timer.singleShot(7500, self.stopAnimation)
+		self.show()
+
+	def startAnimation(self):
+		self.movie.start()
+
+	def stopAnimation(self):
+		self.movie.stop()
+		self.close()
+		
 # Initialize the App
 app = QApplication(sys.argv)
 UIWindow = UI()
