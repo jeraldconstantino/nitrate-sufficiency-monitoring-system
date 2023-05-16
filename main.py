@@ -15,6 +15,8 @@ from PyQt5.QtCore import QTime, QTimer, QThread, Qt, pyqtSignal, QUrl
 from datetime import datetime, timedelta
 import RPiDevices.fishFeeder as fd
 from PyQt5 import uic, QtCore
+from ultralytics import YOLO
+from PIL import Image
 import sys
 import cv2
 import os
@@ -29,6 +31,7 @@ cameraLocation = 0
 cameraHorizontalResolution = 1080
 cameraVerticalResolution = 720
 directory = 'C:/Users/jeral/OneDrive/Desktop/capture/'
+model = YOLO("model/best.pt")
 
 class UI(QMainWindow):
 	def __init__(self):
@@ -39,7 +42,7 @@ class UI(QMainWindow):
 		
 		# Make the main window frameless
 		self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-		self.showFullScreen()
+		# self.showFullScreen()
 
 		# Set the logo of the application
 		self.setWindowIcon(QIcon('icon\logo.svg'))
@@ -207,14 +210,19 @@ class UI(QMainWindow):
 		self.minimizeBtn.clicked.connect(self.showMinimized) # Minimize the App when clicked
 
 		# Multithreading for Camera and Fish feeder widget
-		self.cameraWidget = CameraWidget()
+		self.cameraWidget = CameraWidget(0)
 		self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
 		self.cameraWidget.start()
 
-		self.fishFeederWidget = FishFeederWidget()
+		self.fishFeederWidget = FishFeederWidget() # Instances of fish feeder
 
 		# Trigger the Fish Feeding Device to operate
 		self.feedNowBtn.clicked.connect(self.activateFishFeeder)
+
+		# Start live feeding
+		self.liveFeedBtn.setCheckable(True)
+		self.liveFeedBtn.setChecked(False)
+		self.liveFeedBtn.clicked.connect(self.startLiveFeed)
 
 		self.captureBtn.clicked.connect(self.saveImage)
 		self.showFolderBtn.clicked.connect(self.openFileDialog)
@@ -223,6 +231,54 @@ class UI(QMainWindow):
 	def activateFishFeeder(self):
 		self.fishFeederWidget.start()
 		self.fishFeederWidget.stop()
+
+	def startLiveFeed(self):
+		if self.liveFeedBtn.isChecked():
+			self.cameraWidget.stop() # stop the normal camera to operate
+			self.cameraWidget = CameraWidget(1) # initialize the classification model
+			self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
+			self.cameraWidget.start() # start detection
+			self.liveFeedBtn.setStyleSheet("""
+				QPushButton {
+					background-color: #A40808;
+					color: #fff;
+					border-radius: 15px;
+					padding: 10px 25px;
+					font: bold 12pt "Poppins";
+				}
+
+				QPushButton:hover {
+					background-color: #F42020;
+				}
+
+				QPushButton:pressed {
+					background-color: #F65050;
+				}
+			""")
+			self.liveFeedBtn.setText("STOP DETECTION")
+		else:
+			self.cameraWidget.stop() # stop detection
+			self.cameraWidget = CameraWidget(0) # initialize the normal camera
+			self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
+			self.cameraWidget.start() # start the normal camera
+			self.liveFeedBtn.setStyleSheet("""
+				QPushButton {
+					background-color: #287194;
+					color: #fff;
+					border-radius: 15px;
+					padding: 10px 25px;
+					font: bold 12pt "Poppins";
+				}
+
+				QPushButton:hover {
+					background-color: #1F5773;
+				}
+
+				QPushButton:pressed {
+					background-color: #193D4D;
+				}
+			""")
+			self.liveFeedBtn.setText("START DETECTION")
 
 	def fishFeedingSchedCounter(self):
 		raw_current_datetime = datetime.now()
@@ -533,21 +589,30 @@ class UI(QMainWindow):
 class CameraWidget(QThread):
 	imageUpdate = pyqtSignal(QImage)
 	
-	def __init__(self):
+	def __init__(self, liveFeedStatus):
 		super().__init__()
+		self.liveFeedStatus = liveFeedStatus
 
 	def run(self):
 		self.ThreadActive = True
 		capture = cv2.VideoCapture(cameraLocation)
+	
 		while self.ThreadActive:
 			ret, frame = capture.read()
 			if ret:
-				image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-				flippedImage = cv2.flip(image, 1)
-				convertToQtFormat = QImage(flippedImage.data, flippedImage.shape[1], flippedImage.shape[0], QImage.Format_RGB888)
-				imageData = convertToQtFormat.scaled(cameraVerticalResolution, cameraHorizontalResolution, Qt.KeepAspectRatio)
-
-				self.imageUpdate.emit(imageData)
+				if self.liveFeedStatus == 0:
+					self.displayFrame(frame)
+				elif self.liveFeedStatus == 1:
+					predictions = model(frame)
+					annotatedFrame = predictions[0].plot()
+					self.displayFrame(annotatedFrame)
+					
+	def displayFrame(self, frame):
+		image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+		# flippedImage = cv2.flip(image, 1)
+		convertToQtFormat = QImage(image.data, image.shape[1], image.shape[0], QImage.Format_RGB888)
+		imageData = convertToQtFormat.scaled(cameraVerticalResolution, cameraHorizontalResolution, Qt.KeepAspectRatio)
+		self.imageUpdate.emit(imageData)
 
 	def stop(self):
 		self.ThreadActive = False
