@@ -20,7 +20,6 @@ import cv2
 import os
 
 # Must be modified or calibrated to make it work with other device.
-cameraLocation = 0 # Detection of the location of camera connection.
 cameraHorizontalResolution = 1080
 cameraVerticalResolution = 720
 
@@ -237,6 +236,7 @@ class UI(QMainWindow):
 		if self.liveFeedBtn.isChecked():
 			self.loadingScreen = LoadingScreen() # Create an instance of loading screen
 			self.cameraWidget.stop() # stop the normal camera to operate
+			sleep(1)
 			self.cameraWidget = CameraWidget(1) # initialize the classification model
 			self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
 			self.cameraWidget.start() # start detection
@@ -260,7 +260,9 @@ class UI(QMainWindow):
 			""")
 			self.liveFeedBtn.setText("STOP DETECTION")
 		else:
+			self.loadingScreen = LoadingScreen() # Create an instance of loading screen
 			self.cameraWidget.stop() # stop detection
+			sleep(1)
 			self.cameraWidget = CameraWidget(0) # initialize the normal camera
 			self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
 			self.cameraWidget.start() # start the normal camera
@@ -598,7 +600,7 @@ class CameraWidget(QThread):
 
 	def run(self):
 		self.ThreadActive = True
-		capture = cv2.VideoCapture(cameraLocation)
+		capture = cv2.VideoCapture(cv2.CAP_ANY) 
 		while self.ThreadActive:
 			ret, frame = capture.read()
 			if ret:
@@ -631,9 +633,10 @@ class LoadingScreen(QWidget):
 		super().__init__()
 		self.setFixedSize(200, 200)
 		self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint)
+		self.setGeometry(300, 200, 300, 300) # set the position of  the dialog
 
 		self.labelAnimation = QLabel(self)
-		self.movie = QMovie('gif/loading_indicator.gif')
+		self.movie = QMovie(loadingIndicatorPath)
 		self.labelAnimation.setMovie(self.movie)
 
 		timer = QTimer(self)
