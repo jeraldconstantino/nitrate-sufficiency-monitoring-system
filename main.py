@@ -21,17 +21,19 @@ import sys
 import cv2
 import os
 
-# Declaration of the UI files.
-mainWindowUI = "main.ui"
-feedingScheduleDialogUI = "feedingScheduleDialog.ui"
-
 # Detection of the location of camera connection.
 # Must be modified or calibrated to make it work with other device.
 cameraLocation = 0
 cameraHorizontalResolution = 1080
 cameraVerticalResolution = 720
+
+# Path declaration
+mainWindowUI = "main.ui"
+feedingScheduleDialogUI = "feedingScheduleDialog.ui"
 directory = 'C:/Users/jeral/OneDrive/Desktop/capture/'
 model = YOLO("model/best.pt")
+windowLogoPath = "icon/logo.svg"
+
 
 class UI(QMainWindow):
 	def __init__(self):
@@ -45,7 +47,7 @@ class UI(QMainWindow):
 		# self.showFullScreen()
 
 		# Set the logo of the application
-		self.setWindowIcon(QIcon('icon\logo.svg'))
+		self.setWindowIcon(QIcon(windowLogoPath))
 
 		# QLabel widget
 		self.timeLabel = self.findChild(QLabel, "timeLabel")
@@ -210,11 +212,12 @@ class UI(QMainWindow):
 		self.minimizeBtn.clicked.connect(self.showMinimized) # Minimize the App when clicked
 
 		# Multithreading for Camera and Fish feeder widget
-		self.cameraWidget = CameraWidget(0)
+		self.cameraWidget = CameraWidget()
 		self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
 		self.cameraWidget.start()
 
 		self.fishFeederWidget = FishFeederWidget() # Instances of fish feeder
+		self.classificationModel = ClassificationModel() # Instances for classification model
 
 		# Trigger the Fish Feeding Device to operate
 		self.feedNowBtn.clicked.connect(self.activateFishFeeder)
@@ -235,9 +238,8 @@ class UI(QMainWindow):
 	def startLiveFeed(self):
 		if self.liveFeedBtn.isChecked():
 			self.cameraWidget.stop() # stop the normal camera to operate
-			self.cameraWidget = CameraWidget(1) # initialize the classification model
-			self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
-			self.cameraWidget.start() # start detection
+			self.classificationModel.imageUpdate.connect(self.imageUpdateSlot)
+			self.classificationModel.start() # start detection
 			self.liveFeedBtn.setStyleSheet("""
 				QPushButton {
 					background-color: #A40808;
@@ -257,8 +259,8 @@ class UI(QMainWindow):
 			""")
 			self.liveFeedBtn.setText("STOP DETECTION")
 		else:
-			self.cameraWidget.stop() # stop detection
-			self.cameraWidget = CameraWidget(0) # initialize the normal camera
+			self.classificationModel.stop() # stop detection
+			self.cameraWidget = CameraWidget() # initialize the normal camera
 			self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
 			self.cameraWidget.start() # start the normal camera
 			self.liveFeedBtn.setStyleSheet("""
@@ -589,9 +591,8 @@ class UI(QMainWindow):
 class CameraWidget(QThread):
 	imageUpdate = pyqtSignal(QImage)
 	
-	def __init__(self, liveFeedStatus):
+	def __init__(self):
 		super().__init__()
-		self.liveFeedStatus = liveFeedStatus
 
 	def run(self):
 		self.ThreadActive = True
@@ -600,20 +601,35 @@ class CameraWidget(QThread):
 		while self.ThreadActive:
 			ret, frame = capture.read()
 			if ret:
-				if self.liveFeedStatus == 0:
-					self.displayFrame(frame)
-				elif self.liveFeedStatus == 1:
-					predictions = model(frame)
-					annotatedFrame = predictions[0].plot()
-					self.displayFrame(annotatedFrame)
-					
-	def displayFrame(self, frame):
-		image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-		# flippedImage = cv2.flip(image, 1)
-		convertToQtFormat = QImage(image.data, image.shape[1], image.shape[0], QImage.Format_RGB888)
-		imageData = convertToQtFormat.scaled(cameraVerticalResolution, cameraHorizontalResolution, Qt.KeepAspectRatio)
-		self.imageUpdate.emit(imageData)
+				image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+				convertToQtFormat = QImage(image.data, image.shape[1], image.shape[0], QImage.Format_RGB888)
+				imageData = convertToQtFormat.scaled(cameraVerticalResolution, cameraHorizontalResolution, Qt.KeepAspectRatio)
+				self.imageUpdate.emit(imageData)
 
+	def stop(self):
+		self.ThreadActive = False
+		self.quit()
+
+class ClassificationModel(QThread):
+	imageUpdate = pyqtSignal(QImage)
+	
+	def __init__(self):
+		super().__init__()
+
+	def run(self):
+		self.ThreadActive = True
+		capture = cv2.VideoCapture(cameraLocation)
+	
+		while self.ThreadActive:
+			ret, frame = capture.read()
+			if ret:
+				predictions = model(frame)
+				annotatedFrame = predictions[0].plot()
+				image = cv2.cvtColor(annotatedFrame, cv2.COLOR_BGR2RGB)
+				convertToQtFormat = QImage(image.data, image.shape[1], image.shape[0], QImage.Format_RGB888)
+				imageData = convertToQtFormat.scaled(cameraVerticalResolution, cameraHorizontalResolution, Qt.KeepAspectRatio)
+				self.imageUpdate.emit(imageData)
+					
 	def stop(self):
 		self.ThreadActive = False
 		self.quit()
