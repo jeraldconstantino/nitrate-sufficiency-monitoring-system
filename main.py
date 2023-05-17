@@ -262,7 +262,15 @@ class UI(QMainWindow):
 			self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
 			self.cameraWidget.start() # start detection
 		else:
-			print("im working")
+			self.loadingScreen = LoadingScreen(self) # Create an instance of loading screen
+			self.cameraWidget.stop() # stop detection
+			sleep(1)
+			self.cameraWidget = CameraWidget(0, self.classResult, self.accuracyResult) # initialize the normal camera
+			self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
+			self.cameraWidget.start() # start the normal camera			
+			sleep(1)
+			self.classResult.setText("No Detection")
+			self.accuracyResult.setText("0%")
 			self.liveFeedBtn.setText("START DETECTION")
 			self.liveFeedBtn.setStyleSheet("""
 				QPushButton {
@@ -282,13 +290,6 @@ class UI(QMainWindow):
 				}
 			""")
 		
-			self.loadingScreen = LoadingScreen(self) # Create an instance of loading screen
-			self.cameraWidget.stop() # stop detection
-			sleep(1)
-			self.cameraWidget = CameraWidget(0, self.classResult, self.accuracyResult) # initialize the normal camera
-			self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
-			self.cameraWidget.start() # start the normal camera
-
 	def fishFeedingSchedCounter(self):
 		raw_current_datetime = datetime.now()
 		formatted_current_date = raw_current_datetime.strftime("%B %d, %Y (%A)")
@@ -312,16 +313,13 @@ class UI(QMainWindow):
 			rawFourthFeedingSched = datetime.combine(rawFourthFeedingSched.date(), datetime.strptime("12:00 AM", "%I:%M %p").time())
 
 		firstFeedingSched = rawMorningFeedingSched.strftime("%I:%M:%S %p")
-		secondFeedingSched = rawSecondFeedingSched.strftime("%I:%M:%S %p")
 		thirdFeedingSched = rawAfternoonFeedingSched.strftime("%I:%M:%S %p")
-		fourthFeedingSched = rawFourthFeedingSched.strftime("%I:%M:%S %p")
-
 
 		if (formatted_current_time == firstFeedingSched or formatted_current_time == thirdFeedingSched):
 			self.activateFishFeeder()
 
 		self.mainFrame = self.findChild(QFrame, "mainFrame")
-		cameraPreviewHolder = self.findChild(QLabel,"cameraPreviewHolder")
+		self.cameraPreviewHolder = self.findChild(QLabel,"cameraPreviewHolder")
 
 		# Updates the fish feeding status based on the inference result.
 		if (self.classResult.text().lower() == "deficient"):
@@ -344,7 +342,7 @@ class UI(QMainWindow):
 				}
 			""")
 
-			cameraPreviewHolder.setStyleSheet("""
+			self.cameraPreviewHolder.setStyleSheet("""
 				QLabel {
 					background-color: rgba(255, 255, 255, 0);
 					color: rgba(0, 0, 0, 255);
@@ -444,122 +442,124 @@ class UI(QMainWindow):
 			""")		
 
 		else:
-			self.fishFeedingStatusResult.setText("Twice a day") 
-			self.secondSchedTitle.hide()
-			self.secondSchedResult.hide()
+			self.resetToDefaultStyle()
 
-			self.thirdSchedTitle.setText("2nd:")
+	def resetToDefaultStyle(self):
+		self.fishFeedingStatusResult.setText("Twice a day") 
+		self.secondSchedTitle.hide()
+		self.secondSchedResult.hide()
+		
+		self.thirdSchedTitle.setText("2nd:")
+		
+		self.fourthSchedTitle.hide()
+		self.fourthSchedResult.hide()
 
-			self.fourthSchedTitle.hide()
-			self.fourthSchedResult.hide()
+		self.mainFrame.setStyleSheet("""
+			QFrame {
+				background-color: rgb(211, 212, 206);
+				border-top-left-radius: 20px;
+				border-top-right-radius: 20px;
+			}
+		""")
 
-			self.mainFrame.setStyleSheet("""
-				QFrame {
-					background-color: rgb(211, 212, 206);
-					border-top-left-radius: 20px;
-					border-top-right-radius: 20px;
-				}
-			""")
+		self.cameraPreviewHolder.setStyleSheet("""
+			QLabel {
+				background-color: rgba(255, 255, 255, 0);
+				color: rgba(0, 0, 0, 255);
+				border: 3px solid #287194;
+				border-radius: 5px;
+			}
+		""")
 
-			cameraPreviewHolder.setStyleSheet("""
-				QLabel {
-					background-color: rgba(255, 255, 255, 0);
-					color: rgba(0, 0, 0, 255);
-					border: 3px solid #287194;
-					border-radius: 5px;
-				}
-			""")
+		self.feedNowBtn.setStyleSheet("""
+			QPushButton {
+				background-color: #287194;
+				color: #fff;
+				border-radius: 15px;
+				padding: 10px 25px;
+				font: bold 12pt "Poppins";
+			}
 
-			self.feedNowBtn.setStyleSheet("""
-				QPushButton {
-					background-color: #287194;
-					color: #fff;
-					border-radius: 15px;
-					padding: 10px 25px;
-					font: bold 12pt "Poppins";
-				}
+			QPushButton:hover {
+				background-color: #1F5773;
+			}
 
-				QPushButton:hover {
-					background-color: #1F5773;
-				}
-
-				QPushButton:pressed {
-					background-color: #193D4D;
-				}
-			""")
+			QPushButton:pressed {
+				background-color: #193D4D;
+			}
+		""")
 			
-			self.setTimeBtn.setStyleSheet("""
-				QPushButton {
-					background-color: #287194;
-					color: #fff;
-					border-radius: 15px;
-					padding: 10px 25px;
-					font: bold 12pt "Poppins";
-				}
+		self.setTimeBtn.setStyleSheet("""
+			QPushButton {
+				background-color: #287194;
+				color: #fff;
+				border-radius: 15px;
+				padding: 10px 25px;
+				font: bold 12pt "Poppins";
+			}
 
-				QPushButton:hover {
-					background-color: #1F5773;
-				}
+			QPushButton:hover {
+				background-color: #1F5773;
+			}
 
-				QPushButton:pressed {
-					background-color: #193D4D;
-				}
-			""")
+			QPushButton:pressed {
+				background-color: #193D4D;
+			}
+		""")
 
-			self.showFolderBtn.setStyleSheet("""
-				QPushButton {
-					background-color: #287194;
-					color: #fff;
-					border-radius: 15px;
-					padding: 10px 25px;
-					font: bold 12pt "Poppins";
-				}
+		self.showFolderBtn.setStyleSheet("""
+			QPushButton {
+				background-color: #287194;
+				color: #fff;
+				border-radius: 15px;
+				padding: 10px 25px;
+				font: bold 12pt "Poppins";
+			}
 
-				QPushButton:hover {
-					background-color: #1F5773;
-				}
+			QPushButton:hover {
+				background-color: #1F5773;
+			}
 
-				QPushButton:pressed {
-					background-color: #193D4D;
-				}
-			""")	
+			QPushButton:pressed {
+				background-color: #193D4D;
+			}
+		""")	
 
-			self.captureBtn.setStyleSheet("""
-				QPushButton {
-					background-color: #287194;
-					color: #fff;
-					border-radius: 15px;
-					padding: 10px 25px;
-					font: bold 12pt "Poppins";
-				}
+		self.captureBtn.setStyleSheet("""
+			QPushButton {
+				background-color: #287194;
+				color: #fff;
+				border-radius: 15px;
+				padding: 10px 25px;
+				font: bold 12pt "Poppins";
+			}
 
-				QPushButton:hover {
-					background-color: #1F5773;
-				}
+			QPushButton:hover {
+				background-color: #1F5773;
+			}
 
-				QPushButton:pressed {
-					background-color: #193D4D;
-				}
-			""")
+			QPushButton:pressed {
+				background-color: #193D4D;
+			}
+		""")
 
-			self.liveFeedBtn.setStyleSheet("""
-				QPushButton {
-					background-color: #287194;
-					color: #fff;
-					border-radius: 15px;
-					padding: 10px 25px;
-					font: bold 12pt "Poppins";
-				}
+		self.liveFeedBtn.setStyleSheet("""
+			QPushButton {
+				background-color: #287194;
+				color: #fff;
+				border-radius: 15px;
+				padding: 10px 25px;
+				font: bold 12pt "Poppins";
+			}
 
-				QPushButton:hover {
-					background-color: #1F5773;
-				}
+			QPushButton:hover {
+				background-color: #1F5773;
+			}
 
-				QPushButton:pressed {
-					background-color: #193D4D;
-				}
-			""")		
-
+			QPushButton:pressed {
+				background-color: #193D4D;
+			}
+		""")		
 
 	def openFeedingScheduleDialog(self):
 		self.dialog = QDialog(self)
