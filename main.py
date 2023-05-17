@@ -306,16 +306,15 @@ class UI(QMainWindow):
 			rawFourthFeedingSched = datetime.combine(rawFourthFeedingSched.date(), datetime.strptime("12:00 AM", "%I:%M %p").time())
 
 		firstFeedingSched = rawMorningFeedingSched.strftime("%I:%M:%S %p")
+		secondFeedingSched = rawSecondFeedingSched.strftime("%I:%M:%S %p")
 		thirdFeedingSched = rawAfternoonFeedingSched.strftime("%I:%M:%S %p")
-
-		if (formatted_current_time == firstFeedingSched or formatted_current_time == thirdFeedingSched):
-			self.activateFishFeeder()
+		fourthFeedingSched = rawFourthFeedingSched.strftime("%I:%M:%S %p")
 
 		self.mainFrame = self.findChild(QFrame, "mainFrame")
 		self.cameraPreviewHolder = self.findChild(QLabel,"cameraPreviewHolder")
 
 		# Updates the fish feeding status based on the inference result.
-		if (self.classResult.text().lower() == "deficient"):
+		if (self.classResult.text().lower() == "deficient"):		
 			self.fishFeedingStatusResult.setText("Four times a day")
 			self.secondSchedTitle.show()
 			self.secondSchedResult.show()
@@ -434,8 +433,12 @@ class UI(QMainWindow):
 				}
 			""")		
 
+			if formatted_current_time in [firstFeedingSched, secondFeedingSched, thirdFeedingSched, fourthFeedingSched]:
+				self.activateFishFeeder()
 		else:
 			self.resetToDefaultStyle()
+			if formatted_current_time in [firstFeedingSched, thirdFeedingSched]:
+				self.activateFishFeeder()
 
 	def resetToDefaultStyle(self):
 		self.fishFeedingStatusResult.setText("Twice a day") 
