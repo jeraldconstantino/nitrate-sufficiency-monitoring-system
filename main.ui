@@ -935,7 +935,7 @@ QPushButton:pressed {
                 </font>
                </property>
                <property name="text">
-                <string>NORMAL</string>
+                <string>No Detection</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -976,7 +976,7 @@ QPushButton:pressed {
                 </font>
                </property>
                <property name="text">
-                <string>90%</string>
+                <string>0%</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>

@@ -15,6 +15,7 @@ import RPiDevices.fishFeeder as fd
 from PyQt5 import uic, QtCore
 from ultralytics import YOLO
 from time import sleep
+import torch
 import sys
 import cv2
 import os
@@ -30,7 +31,7 @@ directory = 'C:/Users/jeral/OneDrive/Desktop/capture/'
 model = YOLO("model/best.pt")
 windowLogoPath = "icon/logo.svg"
 successIconPath = "icon/success.svg"
-loadingIndicatorPath = "gif\loading_indicator.gif"
+loadingIndicatorPath = "gif/loading_indicator.gif"
 
 class UI(QMainWindow):
 	def __init__(self):
@@ -56,9 +57,10 @@ class UI(QMainWindow):
 		self.secondSchedTitle = self.findChild(QLabel, "secondSchedTitle")
 		self.thirdSchedTitle = self.findChild(QLabel, "thirdSchedTitle")
 		self.fourthSchedTitle = self.findChild(QLabel, "fourthSchedTitle")
-		self.class_result = self.findChild(QLabel, "classificationResultLabel")
+		self.classResult = self.findChild(QLabel, "classificationResultLabel")
 		self.fishFeedingStatusResult = self.findChild(QLabel, "fishFeedingStatusResult")
 		self.cameraPreview = self.findChild(QLabel, "cameraPreviewHolder")
+		self.accuracyResult = self.findChild(QLabel, "accuracyResult")
 
 		# QPushButtons widget
 		self.feedNowBtn = self.findChild(QPushButton, "feedNowBtn")
@@ -209,7 +211,7 @@ class UI(QMainWindow):
 		self.minimizeBtn.clicked.connect(self.showMinimized) # Minimize the App when clicked
 
 		# Multithreading for Camera and Fish feeder widget
-		self.cameraWidget = CameraWidget(0)
+		self.cameraWidget = CameraWidget(0, self.classResult, self.accuracyResult)
 		self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
 		self.cameraWidget.start()
 
@@ -237,7 +239,7 @@ class UI(QMainWindow):
 			self.loadingScreen = LoadingScreen(self) # Create an instance of loading screen
 			self.cameraWidget.stop() # stop the normal camera to operate
 			sleep(1)
-			self.cameraWidget = CameraWidget(1) # initialize the classification model
+			self.cameraWidget = CameraWidget(1, self.classResult, self.accuracyResult) # initialize the classification model
 			self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
 			self.cameraWidget.start() # start detection
 
@@ -263,7 +265,7 @@ class UI(QMainWindow):
 			self.loadingScreen = LoadingScreen(self) # Create an instance of loading screen
 			self.cameraWidget.stop() # stop detection
 			sleep(1)
-			self.cameraWidget = CameraWidget(0) # initialize the normal camera
+			self.cameraWidget = CameraWidget(0, self.classResult, self.accuracyResult) # initialize the normal camera
 			self.cameraWidget.imageUpdate.connect(self.imageUpdateSlot)
 			self.cameraWidget.start() # start the normal camera
 			self.liveFeedBtn.setStyleSheet("""
@@ -283,6 +285,22 @@ class UI(QMainWindow):
 					background-color: #193D4D;
 				}
 			""")
+			# self.fishFeedingStatusResult.setText("Twice a day") 
+			# self.secondSchedTitle.hide()
+			# self.secondSchedResult.hide()
+
+			# self.thirdSchedTitle.setText("2nd:")
+
+			# self.fourthSchedTitle.hide()
+			# self.fourthSchedResult.hide()
+
+			# self.mainFrame.setStyleSheet("""
+			# 	QFrame {
+			# 		background-color: rgb(1, 1, 206);
+			# 		border-top-left-radius: 20px;
+			# 		border-top-right-radius: 20px;
+			# 	}
+			# """)
 			self.liveFeedBtn.setText("START DETECTION")
 
 	def fishFeedingSchedCounter(self):
@@ -316,12 +334,11 @@ class UI(QMainWindow):
 		if (formatted_current_time == firstFeedingSched or formatted_current_time == thirdFeedingSched):
 			self.activateFishFeeder()
 
-		mainFrame = self.findChild(QFrame, "mainFrame")
+		self.mainFrame = self.findChild(QFrame, "mainFrame")
 		cameraPreviewHolder = self.findChild(QLabel,"cameraPreviewHolder")
 
 		# Updates the fish feeding status based on the inference result.
-		classResult = self.classificationResultLabel.text()
-		if (classResult.lower() == "deficient"):
+		if (self.classResult.text().lower() == "deficient"):
 			self.fishFeedingStatusResult.setText("Four times a day")
 			self.secondSchedTitle.show()
 			self.secondSchedResult.show()
@@ -333,7 +350,7 @@ class UI(QMainWindow):
 			self.fourthSchedResult.show()
 			self.fourthSchedResult.setText(rawFourthFeedingSched.strftime("%I:%M %p").lstrip('0'))
 
-			mainFrame.setStyleSheet("""
+			self.mainFrame.setStyleSheet("""
 				QFrame {
 					background-color: rgb(250, 160, 160);
 					border-top-left-radius: 20px;
@@ -450,7 +467,7 @@ class UI(QMainWindow):
 			self.fourthSchedTitle.hide()
 			self.fourthSchedResult.hide()
 
-			mainFrame.setStyleSheet("""
+			self.mainFrame.setStyleSheet("""
 				QFrame {
 					background-color: rgb(211, 212, 206);
 					border-top-left-radius: 20px;
@@ -594,9 +611,11 @@ class UI(QMainWindow):
 class CameraWidget(QThread):
 	imageUpdate = pyqtSignal(QImage)
 	
-	def __init__(self, liveFeedStatus):
+	def __init__(self, liveFeedStatus, classResult, accuracyResult):
 		super().__init__()
 		self.liveFeedStatus = liveFeedStatus
+		self.classResult = classResult
+		self.accuracyResult = accuracyResult
 
 	def run(self):
 		self.ThreadActive = True
@@ -607,9 +626,31 @@ class CameraWidget(QThread):
 				if self.liveFeedStatus == 0:
 					self.displayFrame(frame)
 				elif self.liveFeedStatus == 1:
-					predictions = model(frame)
-					annotatedFrame = predictions[0].plot()
-					self.displayFrame(annotatedFrame)
+					predictions = model(frame, stream=True, conf=0.5)
+					for prediction in predictions:
+						annotatedFrame = prediction.plot()
+						self.displayFrame(annotatedFrame)
+
+						classificationResult = "-"
+						classLabels = prediction.boxes.cls
+						if 0 in classLabels:
+							classificationResult = "Deficient"
+						elif 1 in classLabels:
+							classificationResult = "Sufficient"
+						else:
+							classificationResult = "No Detection"
+						self.classResult.setText(classificationResult)
+						
+						classScore = prediction.boxes.conf
+						if len(classScore) > 0:
+							classScoreAverage = (torch.sum(classScore) / len(classScore)) * 100
+							rounded_value = f'{round(classScoreAverage.item(), 2)}%'
+							self.accuracyResult.setText(rounded_value)
+						else:
+							self.accuracyResult.setText("0%")
+						
+	def hasDeficient(self, list):
+		return 0 in list
 
 	def displayFrame(self, frame):
 		image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
