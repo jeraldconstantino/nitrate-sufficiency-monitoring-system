@@ -539,24 +539,6 @@ class UI(QMainWindow):
 			}
 		""")
 
-		self.liveFeedBtn.setStyleSheet("""
-			QPushButton {
-				background-color: #287194;
-				color: #fff;
-				border-radius: 15px;
-				padding: 10px 25px;
-				font: bold 12pt "Poppins";
-			}
-
-			QPushButton:hover {
-				background-color: #1F5773;
-			}
-
-			QPushButton:pressed {
-				background-color: #193D4D;
-			}
-		""")		
-
 	def openFeedingScheduleDialog(self):
 		self.dialog = QDialog(self)
 		uic.loadUi(feedingScheduleDialogUI, self.dialog)
