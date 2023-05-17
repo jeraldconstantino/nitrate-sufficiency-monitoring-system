@@ -1,15 +1,6 @@
-######################################################################################################
-# TODO: 
-#       - Set Time btn should store the edited time to the local database.
-#
-#		If there's more time:
-#			FEATURES: Add settings for dropdown list of camera available
-#
-######################################################################################################
-
 from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QDialog, QMessageBox, QTimeEdit, QFrame, QFileDialog, QWidget
 from PyQt5.QtGui import QFont, QImage, QPixmap, QDesktopServices, QIcon, QMovie
-from PyQt5.QtCore import QTime, QTimer, QThread, Qt, pyqtSignal, QUrl
+from PyQt5.QtCore import QTime, QTimer, QThread, Qt, pyqtSignal, QUrl, QSettings
 from datetime import datetime, timedelta
 import RPiDevices.fishFeeder as fd
 from PyQt5 import uic, QtCore
@@ -227,6 +218,8 @@ class UI(QMainWindow):
 
 		self.captureBtn.clicked.connect(self.saveImage)
 		self.showFolderBtn.clicked.connect(self.openFileDialog)
+
+		self.loadFeedingScheduledTime()
 
 		self.show()
 
@@ -623,6 +616,16 @@ class UI(QMainWindow):
 		self.liveFeedBtn.setEnabled(True)
 		self.showFolderBtn.setEnabled(True)
 
+	# Load the saved scheduled time 
+	def loadFeedingScheduledTime(self):
+		scheduleSettings = QSettings("FishFeedSchedule", "FeedingTimeSetter")
+		savedFirstFeedingSchedule = scheduleSettings.value("morningSchedule")
+		savedSecondFeedingSchedule = scheduleSettings.value("afternoonSchedule")
+
+		if savedFirstFeedingSchedule or savedSecondFeedingSchedule:
+			self.firstSchedResult.setText(savedFirstFeedingSchedule)
+			self.thirdSchedResult.setText(savedSecondFeedingSchedule)
+
 	def setTime(self):
 		# Get the time from the QTimeEdit widget as a QTime object and converted to String.	
 		edittedMorningSched = self.firstSchedTime.time()
@@ -634,6 +637,11 @@ class UI(QMainWindow):
 		# Set the editted time to the Time Schedule display.
 		self.firstSchedResult.setText(edittedMorningSchedStr)
 		self.thirdSchedResult.setText(edittedAfternoonSchedStr)
+
+		# Update the QSettings FeedingTimeSetter
+		scheduleSettings = QSettings("FishFeedSchedule", "FeedingTimeSetter")
+		scheduleSettings.setValue("morningSchedule", edittedMorningSchedStr)
+		scheduleSettings.setValue("afternoonSchedule", edittedAfternoonSchedStr)
 		self.dialog.reject()
 
 	def successDialog(self):
