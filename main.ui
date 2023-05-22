@@ -690,6 +690,7 @@ QPushButton:pressed {
                <family>Poppins</family>
                <pointsize>12</pointsize>
                <weight>75</weight>
+               <italic>false</italic>
                <bold>true</bold>
               </font>
              </property>
@@ -697,19 +698,21 @@ QPushButton:pressed {
               <bool>false</bool>
              </property>
              <property name="styleSheet">
-              <string notr="true">QPushButton {
-    background-color: #287194;
-    color: white;
-    padding: 5px 25px;
-}
+              <string notr="true">			QPushButton {
+				background-color: #287194;
+				color: #fff;
+				border-radius: 15px;
+				padding: 8px 25px;
+				font: bold 12pt &quot;Poppins&quot;;
+			}
 
-QPushButton:hover {
-    background-color: #1F5773;
-}
+			QPushButton:hover {
+				background-color: #1F5773;
+			}
 
-QPushButton:pressed {
-    background-color: #193D4D;
-}</string>
+			QPushButton:pressed {
+				background-color: #193D4D;
+			}</string>
              </property>
              <property name="text">
               <string>CAPTURE</string>
@@ -723,23 +726,26 @@ QPushButton:pressed {
                <family>Poppins</family>
                <pointsize>12</pointsize>
                <weight>75</weight>
+               <italic>false</italic>
                <bold>true</bold>
               </font>
              </property>
              <property name="styleSheet">
-              <string notr="true">QPushButton {
-    background-color: #287194;
-    color: white;
-    padding: 5px 25px;
-}
+              <string notr="true">			QPushButton {
+				background-color: #287194;
+				color: #fff;
+				border-radius: 15px;
+				padding: 8px 25px;
+				font: bold 12pt &quot;Poppins&quot;;
+			}
 
-QPushButton:hover {
-    background-color: #1F5773;
-}
+			QPushButton:hover {
+				background-color: #1F5773;
+			}
 
-QPushButton:pressed {
-    background-color: #193D4D;
-}</string>
+			QPushButton:pressed {
+				background-color: #193D4D;
+			}</string>
              </property>
              <property name="text">
               <string>START DETECTION</string>
@@ -753,22 +759,26 @@ QPushButton:pressed {
                <family>Poppins</family>
                <pointsize>12</pointsize>
                <weight>75</weight>
+               <italic>false</italic>
                <bold>true</bold>
               </font>
              </property>
              <property name="styleSheet">
-              <string notr="true">QPushButton {
-    background-color: #287194;
-    color: white;
-}
+              <string notr="true">			QPushButton {
+				background-color: #287194;
+				color: #fff;
+				border-radius: 15px;
+				padding: 8px 25px;
+				font: bold 12pt &quot;Poppins&quot;;
+			}
 
-QPushButton:hover {
-    background-color: #1F5773;
-}
+			QPushButton:hover {
+				background-color: #1F5773;
+			}
 
-QPushButton:pressed {
-    background-color: #193D4D;
-}</string>
+			QPushButton:pressed {
+				background-color: #193D4D;
+			}</string>
              </property>
              <property name="text">
               <string>BROWSE FILE</string>
@@ -1301,23 +1311,26 @@ QPushButton:pressed {
                  <family>Poppins</family>
                  <pointsize>12</pointsize>
                  <weight>75</weight>
+                 <italic>false</italic>
                  <bold>true</bold>
                 </font>
                </property>
                <property name="styleSheet">
-                <string notr="true">QPushButton {
-    background-color: #287194;
-    color: white;
-    padding: 5px 25px;
-}
+                <string notr="true">			QPushButton {
+				background-color: #287194;
+				color: #fff;
+				border-radius: 15px;
+				padding: 8px 25px;
+				font: bold 12pt &quot;Poppins&quot;;
+			}
 
-QPushButton:hover {
-    background-color: #1F5773;
-}
+			QPushButton:hover {
+				background-color: #1F5773;
+			}
 
-QPushButton:pressed {
-    background-color: #193D4D;
-}</string>
+			QPushButton:pressed {
+				background-color: #193D4D;
+			}</string>
                </property>
                <property name="text">
                 <string>FEED NOW</string>
@@ -1331,23 +1344,26 @@ QPushButton:pressed {
                  <family>Poppins</family>
                  <pointsize>12</pointsize>
                  <weight>75</weight>
+                 <italic>false</italic>
                  <bold>true</bold>
                 </font>
                </property>
                <property name="styleSheet">
-                <string notr="true">QPushButton {
-    background-color: #287194;
-    color: white;
-    padding: 5px 25px;
-}
+                <string notr="true">			QPushButton {
+				background-color: #287194;
+				color: #fff;
+				border-radius: 15px;
+				padding: 8px 25px;
+				font: bold 12pt &quot;Poppins&quot;;
+			}
 
-QPushButton:hover {
-    background-color: #1F5773;
-}
+			QPushButton:hover {
+				background-color: #1F5773;
+			}
 
-QPushButton:pressed {
-    background-color: #193D4D;
-}</string>
+			QPushButton:pressed {
+				background-color: #193D4D;
+			}</string>
                </property>
                <property name="text">
                 <string>SET TIME</string>
