@@ -644,30 +644,73 @@ class UI(QMainWindow):
 	def setTime(self):
 		# Get the time from the QTimeEdit widget as a QTime object and converted to String.	
 		edittedFirstSched = self.firstSchedTime.time()
-		edittedFirstSchedStr = edittedFirstSched.toString('h:mm AP')
-
 		edittedSecondSched = self.secondSchedTime.time()
-		edittedSecondSchedStr = edittedSecondSched.toString('h:mm AP')
-		
 		edittedThirdSched = self.thirdSchedTime.time()
-		edittedThirdSchedStr = edittedThirdSched.toString('h:mm AP')
-
 		edittedFourthSched = self.fourthSchedTime.time()
+
+		edittedFirstSchedStr = edittedFirstSched.toString('h:mm AP')
+		edittedSecondSchedStr = edittedSecondSched.toString('h:mm AP')
+		edittedThirdSchedStr = edittedThirdSched.toString('h:mm AP')
 		edittedFourthSchedStr = edittedFourthSched.toString('h:mm AP')
+		
+		isValid = self.validateTime(edittedFirstSched, edittedSecondSched, edittedThirdSched, edittedFourthSched)
 
-		# Set the editted time to the Time Schedule display.
-		self.firstSchedResult.setText(edittedFirstSchedStr)
-		self.secondSchedResult.setText(edittedSecondSchedStr)
-		self.fourthSchedResult.setText(edittedThirdSchedStr)
-		self.fifthSchedResult.setText(edittedFourthSchedStr)
+		if isValid[0] == True:
+			# Set the editted time to the Time Schedule display.
+			self.firstSchedResult.setText(edittedFirstSchedStr)
+			self.secondSchedResult.setText(edittedSecondSchedStr)
+			self.fourthSchedResult.setText(edittedThirdSchedStr)
+			self.fifthSchedResult.setText(edittedFourthSchedStr)
 
-		# Update the QSettings FeedingTimeSetter
-		scheduleSettings = QSettings("FishFeedSchedule", "FeedingTimeSetter")
-		scheduleSettings.setValue("firstSchedule", edittedFirstSchedStr)
-		scheduleSettings.setValue("secondSchedule", edittedSecondSchedStr)
-		scheduleSettings.setValue("thirdSchedule", edittedThirdSchedStr)
-		scheduleSettings.setValue("fourthSchedule", edittedFourthSchedStr)
-		self.dialog.reject()
+			# Update the QSettings FeedingTimeSetter
+			scheduleSettings = QSettings("FishFeedSchedule", "FeedingTimeSetter")
+			scheduleSettings.setValue("firstSchedule", edittedFirstSchedStr)
+			scheduleSettings.setValue("secondSchedule", edittedSecondSchedStr)
+			scheduleSettings.setValue("thirdSchedule", edittedThirdSchedStr)
+			scheduleSettings.setValue("fourthSchedule", edittedFourthSchedStr)
+			self.dialog.reject()
+		else:
+			self.openInvalidInputDialog(isValid[1], isValid[2])
+
+	def validateTime(self, edittedFirstSched, edittedSecondSched, edittedThirdSched, edittedFourthSched):
+		if edittedSecondSched <= edittedFirstSched:
+			return [False, "First", "second"]
+
+		if edittedFourthSched <= edittedThirdSched:
+			return [False, "Third", "fourth"]
+		return [True]
+	
+	def openInvalidInputDialog(self, schedule1, schedule2):
+		self.invalidInputMessage = QMessageBox(self)
+		self.invalidInputMessage.setIcon(QMessageBox.Warning)
+		self.invalidInputMessage.setText(f"WARNING:\n\n {schedule1} schedule should be earlier than the {schedule2} schedule")
+		self.invalidInputMessage.setGeometry(300, 150, 300, 300) # set the position of  the dialog
+		
+		# Customized QMessageBox() 
+		font = QFont('Poppins', 12)
+		self.invalidInputMessage.setFont(font)
+		self.invalidInputMessage.setStyleSheet("""
+				QMessageBox {
+						background-color: rgb(250, 160, 160);
+				}
+				QMessageBox QLabel {
+						qproperty-alignment: AlignCenter;
+						background-color: transparent;
+				}
+		""")
+
+		okButton = self.invalidInputMessage.addButton(QMessageBox.Ok)
+		okButton.setStyleSheet("""
+				QPushButton {
+						background-color: #F44336;
+						color: #fff;
+						border-radius: 15px;
+						padding: 10px 25px;
+						font: bold 10pt "Poppins";
+				}
+		""")
+		self.invalidInputMessage.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+		self.invalidInputMessage.exec_()
 
 	def successDialog(self):
 		self.successMessageDialog = QMessageBox(self)
