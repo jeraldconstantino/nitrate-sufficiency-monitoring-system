@@ -558,15 +558,34 @@ class UI(QMainWindow):
 		# Access the QTimeEdit widget
 		self.firstSchedTime = self.dialog.findChild(QTimeEdit, "firstSchedTime")
 		self.secondSchedTime = self.dialog.findChild(QTimeEdit, "secondSchedTime")
+		self.thirdSchedTime = self.dialog.findChild(QTimeEdit, "thirdSchedTime")
+		self.fourthSchedTime = self.dialog.findChild(QTimeEdit, "fourthSchedTime")
+		self.thirdSchedTitleDialog = self.dialog.findChild(QLabel, "thirdSchedTitle")
+		self.fourthSchedTitleDialog = self.dialog.findChild(QLabel, "fourthSchedTitle")
 
-		# Set the morning QTime edit based on the current first schedule
-		morningFeedingSchedEdit = QTime.fromString(self.firstSchedResult.text(), 'h:mm AP')
-		self.firstSchedTime.setTime(morningFeedingSchedEdit)
+		# Set the first QTime edit based on the current first schedule
+		firstSchedEdit = QTime.fromString(self.firstSchedResult.text(), 'h:mm AP')
+		self.firstSchedTime.setTime(firstSchedEdit)
 
-		# Set the afternoon QTime edit based on the current first schedule
-		afternoonFeedingSchedEdit = QTime.fromString(self.thirdSchedResult.text(), 'h:mm AP')
-		self.secondSchedTime.setTime(afternoonFeedingSchedEdit)
+		# Set the second QTime edit based on the current second schedule
+		secondSchedEdit = QTime.fromString(self.secondSchedResult.text(), 'h:mm AP')
+		self.secondSchedTime.setTime(secondSchedEdit)
 
+		# Set the third QTime edit based on the current third schedule
+		thirdSchedEdit = QTime.fromString(self.fourthSchedResult.text(), 'h:mm AP')
+		self.thirdSchedTime.setTime(thirdSchedEdit)
+
+		# Set the fourth QTime edit based on the current fourth schedule
+		fourthSchedEdit = QTime.fromString(self.fifthSchedResult.text(), 'h:mm AP')
+		self.fourthSchedTime.setTime(fourthSchedEdit)
+
+		if (self.classResult.text().lower() == "deficient"):		
+			self.thirdSchedTitleDialog.setText("Fourth Schedule:")
+			self.fourthSchedTitleDialog.setText("Fifth Schedule:")
+		else: 
+			self.thirdSchedTitleDialog.setText("Third Schedule:")
+			self.fourthSchedTitleDialog.setText("Fourth Schedule:")
+		
 		setTimeBtn = self.dialog.findChild(QPushButton, "setTimeDialogBtn")
 		setTimeBtn.setStyleSheet("""
 			QPushButton {
@@ -611,29 +630,43 @@ class UI(QMainWindow):
 	# Load the saved scheduled time 
 	def loadFeedingScheduledTime(self):
 		scheduleSettings = QSettings("FishFeedSchedule", "FeedingTimeSetter")
-		savedFirstFeedingSchedule = scheduleSettings.value("morningSchedule")
-		savedSecondFeedingSchedule = scheduleSettings.value("afternoonSchedule")
+		savedFirstFeedingSchedule = scheduleSettings.value("firstSchedule")
+		savedSecondFeedingSchedule = scheduleSettings.value("secondSchedule")
+		savedThirdFeedingSchedule = scheduleSettings.value("thirdSchedule")
+		savedFourthFeedingSchedule = scheduleSettings.value("fourthSchedule")
 
-		if savedFirstFeedingSchedule or savedSecondFeedingSchedule:
+		if savedFirstFeedingSchedule or savedSecondFeedingSchedule or savedThirdFeedingSchedule or savedFourthFeedingSchedule:
 			self.firstSchedResult.setText(savedFirstFeedingSchedule)
-			self.thirdSchedResult.setText(savedSecondFeedingSchedule)
+			self.secondSchedResult.setText(savedSecondFeedingSchedule)
+			self.fourthSchedResult.setText(savedThirdFeedingSchedule)
+			self.fifthSchedResult.setText(savedFourthFeedingSchedule)
 
 	def setTime(self):
 		# Get the time from the QTimeEdit widget as a QTime object and converted to String.	
-		edittedMorningSched = self.firstSchedTime.time()
-		edittedMorningSchedStr = edittedMorningSched.toString('h:mm AP')
+		edittedFirstSched = self.firstSchedTime.time()
+		edittedFirstSchedStr = edittedFirstSched.toString('h:mm AP')
 
-		edittedAfternoonSched = self.secondSchedTime.time()
-		edittedAfternoonSchedStr = edittedAfternoonSched.toString('h:mm AP')
+		edittedSecondSched = self.secondSchedTime.time()
+		edittedSecondSchedStr = edittedSecondSched.toString('h:mm AP')
 		
+		edittedThirdSched = self.thirdSchedTime.time()
+		edittedThirdSchedStr = edittedThirdSched.toString('h:mm AP')
+
+		edittedFourthSched = self.fourthSchedTime.time()
+		edittedFourthSchedStr = edittedFourthSched.toString('h:mm AP')
+
 		# Set the editted time to the Time Schedule display.
-		self.firstSchedResult.setText(edittedMorningSchedStr)
-		self.thirdSchedResult.setText(edittedAfternoonSchedStr)
+		self.firstSchedResult.setText(edittedFirstSchedStr)
+		self.secondSchedResult.setText(edittedSecondSchedStr)
+		self.fourthSchedResult.setText(edittedThirdSchedStr)
+		self.fifthSchedResult.setText(edittedFourthSchedStr)
 
 		# Update the QSettings FeedingTimeSetter
 		scheduleSettings = QSettings("FishFeedSchedule", "FeedingTimeSetter")
-		scheduleSettings.setValue("morningSchedule", edittedMorningSchedStr)
-		scheduleSettings.setValue("afternoonSchedule", edittedAfternoonSchedStr)
+		scheduleSettings.setValue("firstSchedule", edittedFirstSchedStr)
+		scheduleSettings.setValue("secondSchedule", edittedSecondSchedStr)
+		scheduleSettings.setValue("thirdSchedule", edittedThirdSchedStr)
+		scheduleSettings.setValue("fourthSchedule", edittedFourthSchedStr)
 		self.dialog.reject()
 
 	def successDialog(self):

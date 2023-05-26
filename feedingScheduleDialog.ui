@@ -193,7 +193,7 @@ QTimeEdit::down-button {
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="secondSchedTitle">
             <property name="font">
              <font>
               <family>Poppins</family>
@@ -206,7 +206,7 @@ QTimeEdit::down-button {
            </widget>
           </item>
           <item>
-           <widget class="QTimeEdit" name="timeEdit">
+           <widget class="QTimeEdit" name="secondSchedTime">
             <property name="font">
              <font>
               <family>Poppins</family>
@@ -258,7 +258,7 @@ QTimeEdit::down-button {
            <number>0</number>
           </property>
           <item>
-           <widget class="QLabel" name="secondSchedTitle">
+           <widget class="QLabel" name="thirdSchedTitle">
             <property name="font">
              <font>
               <family>Poppins</family>
@@ -271,7 +271,7 @@ QTimeEdit::down-button {
            </widget>
           </item>
           <item>
-           <widget class="QTimeEdit" name="secondSchedTime">
+           <widget class="QTimeEdit" name="thirdSchedTime">
             <property name="font">
              <font>
               <family>Poppins</family>
@@ -316,7 +316,7 @@ QTimeEdit::down-button {
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_2">
+           <widget class="QLabel" name="fourthSchedTitle">
             <property name="font">
              <font>
               <family>Poppins</family>
