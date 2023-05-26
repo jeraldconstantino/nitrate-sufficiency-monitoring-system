@@ -121,14 +121,14 @@ QLabel{
             <property name="font">
              <font>
               <family>Poppins</family>
-              <pointsize>12</pointsize>
+              <pointsize>10</pointsize>
              </font>
             </property>
             <property name="styleSheet">
              <string notr="true"/>
             </property>
             <property name="text">
-             <string>Morning Schedule:</string>
+             <string>First Schedule:</string>
             </property>
            </widget>
           </item>
@@ -192,6 +192,64 @@ QTimeEdit::down-button {
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="font">
+             <font>
+              <family>Poppins</family>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Second Schedule:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTimeEdit" name="timeEdit">
+            <property name="font">
+             <font>
+              <family>Poppins</family>
+              <pointsize>12</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QTimeEdit {
+    background-color: transparent;
+    color: #000;
+    border: 3px solid rgb(25, 61, 77);
+    border-radius: 10px;
+	padding:10px;
+}
+
+QTimeEdit::up-button {
+	subcontrol-origin: border;
+    subcontrol-position: top right;
+    width:40px;
+    height: 25px;
+}
+
+QTimeEdit::down-button {
+	subcontrol-origin: border;
+    subcontrol-position: bottom right;
+    width:40px;
+    height: 25px;
+}</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="maximumTime">
+             <time>
+              <hour>11</hour>
+              <minute>59</minute>
+              <second>59</second>
+             </time>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
         <item>
@@ -204,16 +262,74 @@ QTimeEdit::down-button {
             <property name="font">
              <font>
               <family>Poppins</family>
-              <pointsize>12</pointsize>
+              <pointsize>10</pointsize>
              </font>
             </property>
             <property name="text">
-             <string>Afternoon Schedule:</string>
+             <string>Third Schedule:</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QTimeEdit" name="secondSchedTime">
+            <property name="font">
+             <font>
+              <family>Poppins</family>
+              <pointsize>12</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QTimeEdit {
+    background-color: transparent;
+    color: #000;
+    border: 3px solid rgb(25, 61, 77);
+    border-radius: 10px;
+	padding: 10px;
+}
+
+QTimeEdit::up-button {
+	subcontrol-origin: border;
+    subcontrol-position: top right;
+    width:40px;
+    height: 25px;
+}
+
+QTimeEdit::down-button {
+	subcontrol-origin: border;
+    subcontrol-position: bottom right;
+    width:40px;
+    height: 25px;
+}</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="minimumTime">
+             <time>
+              <hour>12</hour>
+              <minute>0</minute>
+              <second>0</second>
+             </time>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="font">
+             <font>
+              <family>Poppins</family>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Fourth Schedule:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTimeEdit" name="fourthSchedTime">
             <property name="font">
              <font>
               <family>Poppins</family>
