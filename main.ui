@@ -1114,7 +1114,7 @@ QPushButton:pressed {
                 </font>
                </property>
                <property name="text">
-                <string>8:00 AM</string>
+                <string>7:00 AM</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -1155,6 +1155,44 @@ QPushButton:pressed {
                 </font>
                </property>
                <property name="text">
+                <string>10:00 AM</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="thirdSchedLayout">
+             <item>
+              <widget class="QLabel" name="thirdSchedTitle">
+               <property name="font">
+                <font>
+                 <family>Poppins</family>
+                 <pointsize>12</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>3rd:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="thirdSchedResult">
+               <property name="font">
+                <font>
+                 <family>Poppins</family>
+                 <pointsize>12</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
                 <string>12:00 PM</string>
                </property>
                <property name="alignment">
@@ -1183,7 +1221,7 @@ QPushButton:pressed {
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="thirdSchedLayout">
+            <layout class="QHBoxLayout" name="fourthSchedLayout">
              <property name="spacing">
               <number>0</number>
              </property>
@@ -1191,53 +1229,6 @@ QPushButton:pressed {
               <number>0</number>
              </property>
              <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QLabel" name="thirdSchedTitle">
-               <property name="font">
-                <font>
-                 <family>Poppins</family>
-                 <pointsize>12</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>3rd:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="thirdSchedResult">
-               <property name="font">
-                <font>
-                 <family>Poppins</family>
-                 <pointsize>12</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>4:00 PM</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="fourthSchedLayout">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
               <number>0</number>
              </property>
              <item>
@@ -1267,7 +1258,92 @@ QPushButton:pressed {
                 </font>
                </property>
                <property name="text">
-                <string>8:00 PM</string>
+                <string>1:00 PM</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="fifthSchedLayout">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="fifthSchedTitle">
+               <property name="font">
+                <font>
+                 <family>Poppins</family>
+                 <pointsize>12</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>5th:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="fifthSchedResult">
+               <property name="font">
+                <font>
+                 <family>Poppins</family>
+                 <pointsize>12</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>4:00 PM</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="sixthSchedLayout">
+             <item>
+              <widget class="QLabel" name="sixthSchedTitle">
+               <property name="font">
+                <font>
+                 <family>Poppins</family>
+                 <pointsize>12</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>6th</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="sixthSchedResult">
+               <property name="font">
+                <font>
+                 <family>Poppins</family>
+                 <pointsize>12</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>7:00 PM</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>

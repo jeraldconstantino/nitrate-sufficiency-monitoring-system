@@ -284,31 +284,36 @@ class UI(QMainWindow):
 			""")
 		
 	def fishFeedingSchedCounter(self):
-		raw_current_datetime = datetime.now()
-		formatted_current_date = raw_current_datetime.strftime("%B %d, %Y (%A)")
-		formatted_current_time = raw_current_datetime.strftime("%I:%M:%S %p")
+		rawCurrentDatetime = datetime.now()
+		formattedCurrentDate = rawCurrentDatetime.strftime("%B %d, %Y (%A)")
+		formattedCurrentTime = rawCurrentDatetime.strftime("%I:%M:%S %p")
 		
-		self.dateLabel.setText(formatted_current_date)
-		self.timeLabel.setText(formatted_current_time)
+		self.dateLabel.setText(formattedCurrentDate)
+		self.timeLabel.setText(formattedCurrentTime)
 
 		# Acquired feeding time for morning and afternoon schedule
-		rawMorningFeedingSched = datetime.strptime(self.firstSchedResult.text(), "%I:%M %p")
-		rawSecondFeedingSched = rawMorningFeedingSched + timedelta(hours=4) # dependent on first feeding schedule (4 hours advance)
+		rawFirstFeedingSched = datetime.strptime(self.firstSchedResult.text(), "%I:%M %p")
+		rawSecondFeedingSched = datetime.strptime(self.secondSchedResult.text(), "%I:%M %p")
+		rawThirdFeedingSched = rawSecondFeedingSched + timedelta(hours=3) # dependent on second feeding schedule (3 hours advance)
 		
-		if rawSecondFeedingSched.time() > datetime.strptime("12:00 PM", "%I:%M %p").time():
-			rawSecondFeedingSched = datetime.combine(rawSecondFeedingSched.date(), datetime.strptime("12:00 PM", "%I:%M %p").time())
+		if rawThirdFeedingSched.time() > datetime.strptime("12:00 PM", "%I:%M %p").time():
+			rawThirdFeedingSched = datetime.combine(rawThirdFeedingSched.date(), datetime.strptime("12:00 PM", "%I:%M %p").time())
 	
-		rawAfternoonFeedingSched = datetime.strptime(self.thirdSchedResult.text(), "%I:%M %p")
-		rawFourthFeedingSched = rawAfternoonFeedingSched + timedelta(hours=4) # dependent on third feeding schedule (4 hours advance)
+		rawFourthFeedingSched = datetime.strptime(self.fourthSchedResult.text(), "%I:%M %p")
+		rawFifthFeedingSched = datetime.strptime(self.fifthSchedResult.text(), "%I:%M %p")
+		rawSixthFeedingSched = rawFifthFeedingSched + timedelta(hours=3) # dependent on fifth feeding schedule (3 hours advance)
 
 		# Check if the resulting time is later than 12:00 AM but earlier than 4:00 AM, and adjust it accordingly
-		if datetime.strptime("12:00 AM", "%I:%M %p").time() <= rawFourthFeedingSched.time() < datetime.strptime("4:00 AM", "%I:%M %p").time():
-			rawFourthFeedingSched = datetime.combine(rawFourthFeedingSched.date(), datetime.strptime("12:00 AM", "%I:%M %p").time())
+		if datetime.strptime("12:00 AM", "%I:%M %p").time() <= rawSixthFeedingSched.time() < datetime.strptime("4:00 AM", "%I:%M %p").time():
+			rawSixthFeedingSched = datetime.combine(rawSixthFeedingSched.date(), datetime.strptime("12:00 AM", "%I:%M %p").time())
 
-		firstFeedingSched = rawMorningFeedingSched.strftime("%I:%M:%S %p")
+		firstFeedingSched = rawFirstFeedingSched.strftime("%I:%M:%S %p")
 		secondFeedingSched = rawSecondFeedingSched.strftime("%I:%M:%S %p")
-		thirdFeedingSched = rawAfternoonFeedingSched.strftime("%I:%M:%S %p")
+		thirdFeedingSched = rawThirdFeedingSched.strftime("%I:%M:%S %p")
+
 		fourthFeedingSched = rawFourthFeedingSched.strftime("%I:%M:%S %p")
+		fifthFeedingSched = rawFifthFeedingSched.strftime("%I:%M:%S %p")
+		sixthFeedingSched = rawSixthFeedingSched.strftime("%I:%M:%S %p")
 
 		self.mainFrame = self.findChild(QFrame, "mainFrame")
 		self.cameraPreviewHolder = self.findChild(QLabel,"cameraPreviewHolder")
@@ -316,15 +321,16 @@ class UI(QMainWindow):
 		# Updates the fish feeding status based on the inference result.
 		if (self.classResult.text().lower() == "deficient"):		
 			self.fishFeedingStatusResult.setText("Four times a day")
-			self.secondSchedTitle.show()
-			self.secondSchedResult.show()
-			self.secondSchedResult.setText(rawSecondFeedingSched.strftime("%I:%M %p").lstrip('0'))
+			self.thirdSchedTitle.show()
+			self.thirdSchedResult.show()
+			self.thirdSchedResult.setText(rawThirdFeedingSched.strftime("%I:%M %p").lstrip('0'))
 
-			self.thirdSchedTitle.setText("3rd:")
+			self.fourthSchedTitle.setText("4th:")
+			self.fifthSchedTitle.setText("5th:")
 
-			self.fourthSchedTitle.show()
-			self.fourthSchedResult.show()
-			self.fourthSchedResult.setText(rawFourthFeedingSched.strftime("%I:%M %p").lstrip('0'))
+			self.sixthSchedTitle.show()
+			self.sixthSchedResult.show()
+			self.sixthSchedResult.setText(rawSixthFeedingSched.strftime("%I:%M %p").lstrip('0'))
 
 			self.mainFrame.setStyleSheet("""
 				QFrame {
@@ -433,22 +439,23 @@ class UI(QMainWindow):
 				}
 			""")		
 
-			if formatted_current_time in [firstFeedingSched, secondFeedingSched, thirdFeedingSched, fourthFeedingSched]:
+			if formattedCurrentTime in [firstFeedingSched, secondFeedingSched, fourthFeedingSched, fifthFeedingSched]:
 				self.activateFishFeeder()
 		else:
 			self.resetToDefaultStyle()
-			if formatted_current_time in [firstFeedingSched, thirdFeedingSched]:
+			if formattedCurrentTime in [firstFeedingSched, secondFeedingSched, thirdFeedingSched, fourthFeedingSched, fifthFeedingSched, sixthFeedingSched]:
 				self.activateFishFeeder()
 
 	def resetToDefaultStyle(self):
 		self.fishFeedingStatusResult.setText("Twice a day") 
-		self.secondSchedTitle.hide()
-		self.secondSchedResult.hide()
+		self.thirdSchedTitle.hide()
+		self.thirdSchedResult.hide()
 		
-		self.thirdSchedTitle.setText("2nd:")
+		self.fourthSchedTitle.setText("3rd:")
+		self.fifthSchedTitle.setText("4th:")
 		
-		self.fourthSchedTitle.hide()
-		self.fourthSchedResult.hide()
+		self.sixthSchedTitle.hide()
+		self.sixthSchedResult.hide()
 
 		self.mainFrame.setStyleSheet("""
 			QFrame {
