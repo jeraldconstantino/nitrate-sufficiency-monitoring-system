@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>310</height>
+    <height>350</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>500</width>
-    <height>310</height>
+    <height>350</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -46,13 +46,13 @@
      <property name="minimumSize">
       <size>
        <width>500</width>
-       <height>310</height>
+       <height>350</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
        <width>500</width>
-       <height>310</height>
+       <height>350</height>
       </size>
      </property>
      <property name="styleSheet">
@@ -143,7 +143,7 @@ QLabel{
             <property name="font">
              <font>
               <family>Poppins</family>
-              <pointsize>10</pointsize>
+              <pointsize>12</pointsize>
               <weight>75</weight>
               <bold>true</bold>
              </font>
@@ -160,14 +160,14 @@ QLabel{
 QTimeEdit::up-button {
 	subcontrol-origin: border;
     subcontrol-position: top right;
-    width:30px;
+    width:40px;
     height: 25px;
 }
 
 QTimeEdit::down-button {
 	subcontrol-origin: border;
     subcontrol-position: bottom right;
-    width:30px;
+    width:40px;
     height: 25px;
 }</string>
             </property>
@@ -210,7 +210,7 @@ QTimeEdit::down-button {
             <property name="font">
              <font>
               <family>Poppins</family>
-              <pointsize>10</pointsize>
+              <pointsize>12</pointsize>
               <weight>75</weight>
               <bold>true</bold>
              </font>
@@ -227,14 +227,14 @@ QTimeEdit::down-button {
 QTimeEdit::up-button {
 	subcontrol-origin: border;
     subcontrol-position: top right;
-    width:30px;
+    width:40px;
     height: 25px;
 }
 
 QTimeEdit::down-button {
 	subcontrol-origin: border;
     subcontrol-position: bottom right;
-    width:30px;
+    width:40px;
     height: 25px;
 }</string>
             </property>
@@ -275,7 +275,7 @@ QTimeEdit::down-button {
             <property name="font">
              <font>
               <family>Poppins</family>
-              <pointsize>10</pointsize>
+              <pointsize>12</pointsize>
               <weight>75</weight>
               <bold>true</bold>
              </font>
@@ -286,20 +286,20 @@ QTimeEdit::down-button {
     color: #000;
     border: 3px solid rgb(25, 61, 77);
     border-radius: 10px;
-	padding: 10px;
+	padding:10px;
 }
 
 QTimeEdit::up-button {
 	subcontrol-origin: border;
     subcontrol-position: top right;
-    width:30px;
+    width:40px;
     height: 25px;
 }
 
 QTimeEdit::down-button {
 	subcontrol-origin: border;
     subcontrol-position: bottom right;
-    width:30px;
+    width:40px;
     height: 25px;
 }</string>
             </property>
@@ -333,7 +333,7 @@ QTimeEdit::down-button {
             <property name="font">
              <font>
               <family>Poppins</family>
-              <pointsize>10</pointsize>
+              <pointsize>12</pointsize>
               <weight>75</weight>
               <bold>true</bold>
              </font>
@@ -344,20 +344,20 @@ QTimeEdit::down-button {
     color: #000;
     border: 3px solid rgb(25, 61, 77);
     border-radius: 10px;
-	padding: 10px;
+	padding:10px;
 }
 
 QTimeEdit::up-button {
 	subcontrol-origin: border;
     subcontrol-position: top right;
-    width:30px;
+    width:40px;
     height: 25px;
 }
 
 QTimeEdit::down-button {
 	subcontrol-origin: border;
     subcontrol-position: bottom right;
-    width:30px;
+    width:40px;
     height: 25px;
 }</string>
             </property>

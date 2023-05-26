@@ -550,7 +550,7 @@ class UI(QMainWindow):
 		self.dialog = QDialog(self)
 		uic.loadUi(feedingScheduleDialogUI, self.dialog)
 
-		self.dialog.setGeometry(300, 150, 300, 300) # set the position of  the dialog
+		self.dialog.setGeometry(300, 120, 300, 300) # set the position of  the dialog
 
 		self.dialog.setWindowFlags(QtCore.Qt.FramelessWindowHint) # Make the main window frameless 
 		self.dialog.setAttribute(QtCore.Qt.WA_TranslucentBackground) # make the background translucent
