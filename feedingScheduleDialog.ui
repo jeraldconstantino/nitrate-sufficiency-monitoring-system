@@ -160,14 +160,14 @@ QLabel{
 QTimeEdit::up-button {
 	subcontrol-origin: border;
     subcontrol-position: top right;
-    width:40px;
+    width:30px;
     height: 25px;
 }
 
 QTimeEdit::down-button {
 	subcontrol-origin: border;
     subcontrol-position: bottom right;
-    width:40px;
+    width:30px;
     height: 25px;
 }</string>
             </property>
@@ -227,14 +227,14 @@ QTimeEdit::down-button {
 QTimeEdit::up-button {
 	subcontrol-origin: border;
     subcontrol-position: top right;
-    width:40px;
+    width:30px;
     height: 25px;
 }
 
 QTimeEdit::down-button {
 	subcontrol-origin: border;
     subcontrol-position: bottom right;
-    width:40px;
+    width:30px;
     height: 25px;
 }</string>
             </property>
@@ -292,14 +292,14 @@ QTimeEdit::down-button {
 QTimeEdit::up-button {
 	subcontrol-origin: border;
     subcontrol-position: top right;
-    width:40px;
+    width:30px;
     height: 25px;
 }
 
 QTimeEdit::down-button {
 	subcontrol-origin: border;
     subcontrol-position: bottom right;
-    width:40px;
+    width:30px;
     height: 25px;
 }</string>
             </property>
@@ -350,14 +350,14 @@ QTimeEdit::down-button {
 QTimeEdit::up-button {
 	subcontrol-origin: border;
     subcontrol-position: top right;
-    width:40px;
+    width:30px;
     height: 25px;
 }
 
 QTimeEdit::down-button {
 	subcontrol-origin: border;
     subcontrol-position: bottom right;
-    width:40px;
+    width:30px;
     height: 25px;
 }</string>
             </property>
