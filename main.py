@@ -33,7 +33,7 @@ class UI(QMainWindow):
 		
 		# Make the main window frameless
 		self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-		# self.showFullScreen()
+		self.showFullScreen()
 
 		# Set the logo of the application
 		self.setWindowIcon(QIcon(windowLogoPath))
@@ -320,7 +320,7 @@ class UI(QMainWindow):
 
 		# Updates the fish feeding status based on the inference result.
 		if (self.classResult.text().lower() == "deficient"):		
-			self.fishFeedingStatusResult.setText("Four times a day")
+			self.fishFeedingStatusResult.setText("Six times a day")
 			self.thirdSchedTitle.show()
 			self.thirdSchedResult.show()
 			self.thirdSchedResult.setText(rawThirdFeedingSched.strftime("%I:%M %p").lstrip('0'))
@@ -447,7 +447,7 @@ class UI(QMainWindow):
 				self.activateFishFeeder()
 
 	def resetToDefaultStyle(self):
-		self.fishFeedingStatusResult.setText("Twice a day") 
+		self.fishFeedingStatusResult.setText("Four times a day") 
 		self.thirdSchedTitle.hide()
 		self.thirdSchedResult.hide()
 		
