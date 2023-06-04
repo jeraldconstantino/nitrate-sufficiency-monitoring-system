@@ -7,5 +7,5 @@ The system is primarily designed for monitoring and classifying the nitrate suff
 
 ```
 **Disclaimer: **
-This project is part of our Undergraduate Thesis entitled, <i><b>"Monitoring and Classification of Nitrate Sufficiency of an Aquaponic System Based on Lettuce Morphological Status using a Machine Vision Approach."</b></i>
+This project is part of our Undergraduate Thesis entitled, "Monitoring and Classification of Nitrate Sufficiency of an Aquaponic System Based on Lettuce Morphological Status using a Machine Vision Approach."
 ```
