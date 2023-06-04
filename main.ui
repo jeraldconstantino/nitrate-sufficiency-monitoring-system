@@ -1029,7 +1029,7 @@ QPushButton:pressed {
               </font>
              </property>
              <property name="text">
-              <string>Twice a day</string>
+              <string>Four times a day</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>

@@ -33,7 +33,7 @@ class UI(QMainWindow):
 		
 		# Make the main window frameless
 		self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-		self.showFullScreen()
+		#self.showFullScreen()
 
 		# Set the logo of the application
 		self.setWindowIcon(QIcon(windowLogoPath))
