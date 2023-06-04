@@ -70,4 +70,45 @@ Make sure that you have an updated version of the source code by following the i
 
 By following these steps, you should be able to successfully run the software. If you encounter any issues, double-check that you have all the prerequisites installed and that you have followed each step correctly.
 
-> **DISCLAIMER:** This project is part of our Undergraduate Thesis entitled, "Monitoring and Classification of Nitrate Sufficiency of an Aquaponic System Based on Lettuce Morphological Status using a Machine Vision Approach."
+## Deployment in Hardware System
+The software is specifically designed for deployment on a Raspberry Pi 4 Model B with a seven-inch LCD monitor. The authors recommend that the computing device has a minimum of 8GB of RAM and a TPU accelerator connected. This is because performing live video classification and segmentation is a highly intensive task, requiring significant computational resources.
+
+### Circuit Configuration of Fish Feeder and Raspberry Pi 4
+The fish feeder has four wires with different colors: violet, blue, green, and yellow. The violet wire connects to the relay inside the feeder’s case, controlling the DC motor’s on/off function. The blue wire connects to the limit switch. The green wire supplies power (5V) to the relay and switch. The yellow wire is the ground connection.
+> **NOTE:** The authors have modified a fish feeding device, purchased online, to make it programmable with the Raspberry Pi 4 and other microcontrollers. 
+1. Connect the violet color wire to the GPIO 20 (BCM pin numbering) of the digital pins on the Raspberry Pi 4.
+2. Connect the blue color wire to the GPIO 21 (BCM pin numbering) of the digital pins on the Raspberry Pi 4.
+3. Connect the green color wire to the 5V pin of the Raspberry Pi 4.
+4. Connect the yellow color wire to the ground pin of the Raspberry Pi 4.
+5. Insert the two AA batteries (R6S UM-3 1.5V) to the power supply of the fish feeder.
+
+### Configure the Software for Automatic Startup
+1. Follow the instruction on how to run the software above.
+2. Go to the ".config" folder and add folder named "autostart".
+3. Inside that folder, create a file in a ".desktop" extension name.
+4. Open the file. Copy and paste the following commands inside the ".desktop" file.
+  ```
+  [Desktop Entry]
+  Encoding=UTF-8
+  Type=Application
+  Name=<Nitrate Sufficiency>
+  Comment=
+  Exec=sh -c "python3 /home/aquaponics/Desktop/nitrate-sufficiency-monitoring-system/main.py && sleep 5s && wmctrl -r ':ACTIVE:' -b toggle,fullscreen"
+  StartupNotify=false
+  Terminal=true
+  Hidden=false
+  ```
+5. Configure the paths of all necessary files inside the main.py file. Please find the following syntax and modify the paths according to your file system. Ensure that you have provided absolute paths for accurate file referencing
+```
+# Path declaration
+mainWindowUI = "absolute path for main.ui"
+feedingScheduleDialogUI = "absolute path for feedingScheduleDialog.ui"
+directory = 'absolute path for the image folder'
+model = YOLO("absolute path for model/best.pt")
+windowLogoPath = "absolute path for for icon/logo.svg"
+successIconPath = "absolute path for icon/success.svg"
+loadingIndicatorPath = "absolute path for gif/loading_indicator.gif"
+```
+6. Reboot the Raspberry Pi 4 and wait for the software to launch automatically at start-up.
+
+> **DISCLAIMER:** This project is part of our Undergraduate Thesis entitled "Monitoring and Classification of Nitrate Sufficiency of an Aquaponic System Based on Lettuce Morphological Status using a Machine Vision Approach." We would like to express our heartfelt appreciation to all individuals who have supported the development of this project.
