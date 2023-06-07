@@ -113,5 +113,5 @@ loadingIndicatorPath = "absolute path for gif/loading_indicator.gif"
 ----------------------------
 ## NOTE:
 <p align="justify">
-This software is one of the components of the Undergraduate Thesis entitled "Monitoring and Classification of Nitrate Sufficiency of an Aquaponic System Based on Lettuce Morphological Status using a Machine Vision Approach." We want to express our heartfelt appreciation to the person behind the successful implementation of the project and to those who supported the entire development.
+This software is one of the components of the Undergraduate Thesis entitled <b><i>"Monitoring and Classification of Nitrate Sufficiency of an Aquaponic System Based on Lettuce Morphological Status using a Machine Vision Approach." </i></b> The authors want to express their heartfelt appreciation to the person behind the successful implementation of the project and to those who supported the entire development.
 </p>
