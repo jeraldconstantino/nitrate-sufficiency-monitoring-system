@@ -111,7 +111,7 @@ loadingIndicatorPath = "absolute path for gif/loading_indicator.gif"
 ```
 6. Reboot the Raspberry Pi 4 and wait for the software to launch automatically at start-up.
 
-`
+```plaintext
 NOTE:
 This software is one of the components of the Undergraduate Thesis entitled "Monitoring and Classification of Nitrate Sufficiency of an Aquaponic System Based on Lettuce Morphological Status using a Machine Vision Approach." We want to express our heartfelt appreciation to the person behind the successful implementation of the project and to those who supported the entire development.
-`
+```
